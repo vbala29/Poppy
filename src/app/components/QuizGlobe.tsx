@@ -56,6 +56,7 @@ export default function QuizGlobe({
     if (!globeEl.current) {
       return;
     }
+
     globeEl.current.pointOfView(
       {
         lat: startCoordinates.latitude,
@@ -64,6 +65,7 @@ export default function QuizGlobe({
       },
       spinTime
     );
+
     setTimeout(() => {
       globeEl.current.pointOfView(
         {
@@ -84,7 +86,7 @@ export default function QuizGlobe({
 
   let countriesJson: GeoJson = data;
 
-  const countries = [];
+  const countries : { country: string }[] = [];
   for (const country of countriesJson.features) {
     countries.push({ country: country.properties.NAME });
   }
@@ -93,12 +95,12 @@ export default function QuizGlobe({
     <Globe
       globeImageUrl="//unpkg.com/three-globe/example/img/earth-dark.jpg"
       polygonsData={countriesJson.features}
-      polygonCapColor={(country): string =>
+      polygonCapColor={(country : GeoJsonFeature): string =>
         country.properties.NAME === shadedCountry ? "blue" : "grey"
       }
       polygonSideColor={() => "white"}
       polygonStrokeColor={() => "white"}
-      polygonLabel={(country): string =>
+      polygonLabel={(country : GeoJsonFeature): string =>
         `<span style="font-family: ui-monospace;"> ${country.properties.NAME} </span>`
       }
       animateIn={true}

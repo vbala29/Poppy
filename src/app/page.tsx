@@ -1,6 +1,5 @@
 import Head from "next/head";
-import Navbar from "@/app/components/Navbar";
-import GameBoard from "@/app/components/GameBoard";
+import GameBoard from "@/app/components/GameBoard/GameBoard";
 
 export default function Home() {
   return (
@@ -12,7 +11,6 @@ export default function Home() {
         ></meta>
       </Head>
       <main className="min-h-screen bg-black">
-        <Navbar />
         <GameBoard />
       </main>
     </>
