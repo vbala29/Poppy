@@ -1,36 +1,42 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState, useRef} from "react";
+import { useEffect, useState, useRef } from "react";
 let Globe = () => null;
-if (typeof window !== 'undefined') Globe = require('react-globe.gl').default;
+if (typeof window !== "undefined") Globe = require("react-globe.gl").default;
 
 type GeoJsonProperty = {
   NAME: string;
   [key: string]: any;
-}
+};
 
 type GeoJsonFeature = {
   properties: GeoJsonProperty;
   [key: string]: any;
-}
+};
 
 type GeoJson = {
   features: Array<GeoJsonFeature>;
   [key: string]: any;
-}
+};
 
 type Coordinate = {
   latitude: Number;
   longitude: Number;
-}
+};
 type Props = {
   shadedCountry: string;
   startCoordinates: Coordinate;
   endCoordinates: Coordinate;
+  playGame: boolean;
 };
 
-export default function QuizGlobe({ shadedCountry, startCoordinates, endCoordinates }: Props) {
+export default function QuizGlobe({
+  shadedCountry,
+  startCoordinates,
+  endCoordinates,
+  playGame,
+}: Props) {
   const [data, setData] = useState(null);
   const [isLoading, setLoading] = useState(true);
   const [globeReady, setGlobeReady] = useState(false);
@@ -67,7 +73,7 @@ export default function QuizGlobe({ shadedCountry, startCoordinates, endCoordina
         },
         spinTime
       );
-  }, spinTime)
+    }, spinTime);
 
     // globeEl.current.controls().autoRotate = true;
     // globeEl.current.controls().autoRotateSpeed = 1;
@@ -98,6 +104,8 @@ export default function QuizGlobe({ shadedCountry, startCoordinates, endCoordina
       animateIn={true}
       ref={globeEl}
       onGlobeReady={() => setGlobeReady(true)}
+      width={800}
+      height={700}
     />
   );
 }

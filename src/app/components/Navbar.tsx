@@ -17,30 +17,57 @@ function checkActivePath(path: string): boolean {
 export default function Navbar() {
   return (
     <nav className="flex justify-between items-center bg-black text-white p-4 font-mono">
-        
       <div className="flex-shrink mx-5 flex space-x-10">
         <Link className="hover:text-blue" href="/home">
-          <span style={{textDecoration: checkActivePath("/") ? "underline" : "none"}}>Home</span>
+          <span
+            style={{
+              textDecoration: checkActivePath("/") ? "underline" : "none",
+            }}
+          >
+            Home
+          </span>
         </Link>
         <Link className="hover:text-blue" href="/multiplayer">
-            <span style={{textDecoration: checkActivePath("/multiplayer") ? "underline" : "none"}}>Multiplayer</span>
+          <span
+            style={{
+              textDecoration: checkActivePath("/multiplayer")
+                ? "underline"
+                : "none",
+            }}
+          >
+            Multiplayer
+          </span>
         </Link>
       </div>
-    
+
       <div className="flex flex-grow items-center justify-center space-x-3 p-3">
         <FaGamepad size={30} />
-        <span className="text-3xl font-mono font-bold text-blue-800">PopQuiz</span>
+        <span className="text-3xl font-mono font-bold text-blue-800">
+          PopQuiz
+        </span>
       </div>
 
       <div className="flex flex-shrink mx-5 space-x-10">
         <Link className="hover:text-blue" href="/about">
-          <span style={{textDecoration: checkActivePath("/about") ? "underline" : "none"}}>About</span>
+          <span
+            style={{
+              textDecoration: checkActivePath("/about") ? "underline" : "none",
+            }}
+          >
+            About
+          </span>
         </Link>
-        <Link className="hover:text-blue" href="https://github.com/vbala29/PopQuiz">
-          <FaGithub size={23}/>
+        <Link
+          className="hover:text-blue"
+          href="https://github.com/vbala29/PopQuiz"
+        >
+          <FaGithub size={23} />
         </Link>
-        <Link className="hover:text-blue" href="https://github.com/vbala29/PopQuiz">
-          <FaYoutube size={23}/>
+        <Link
+          className="hover:text-blue"
+          href="https://github.com/vbala29/PopQuiz"
+        >
+          <FaYoutube size={23} />
         </Link>
       </div>
     </nav>
