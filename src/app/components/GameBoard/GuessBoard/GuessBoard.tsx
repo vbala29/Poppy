@@ -1,15 +1,15 @@
 import Guess from "@/app/components/GameBoard/GuessBoard/Guess";
 
 type Props = {
-  guessInfo: [string, number][];
+  guessInfo: [number, number][];
 };
 
 export default function GuessBoard({ guessInfo }: Props) {
   return (
     <>
       {
-        guessInfo.map(([country, tilesToFill], index) => (
-            <Guess country={country} tilesToFill={tilesToFill} />
+        guessInfo.map(([population, tilesToFill], index) => (
+            <Guess population={population} tilesToFill={tilesToFill} />
         ))
       }
       {(() => {
