@@ -9,7 +9,7 @@ export default function GameBoard() {
 
 
         <div className="flex flex-col mx-3 my-1">
-            <h2 className="flex text-center m-5 items-center justify-center bg-white rounded-md text-black h-12">
+            <h2 className="flex text-center mx-2 my-5 items-center justify-center bg-white rounded-md text-black h-12">
                 Country: Albania
             </h2>
             
@@ -22,7 +22,7 @@ export default function GameBoard() {
                     Guess 1 / 6
                 </div>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col mb-3">
                 <div className="flex items-center">
                     <div className="bg-black text-white text-center rounded-md h-7 mx-1 ml-2">
                       <h2 className="outline outline-1 outline-white px-6 rounded-md my-0.5">Albania</h2> 
@@ -46,7 +46,17 @@ export default function GameBoard() {
         />
       </div>
 
-      <div className="bg-white mx-10 my-10 w-full h-96 rounded-lg"></div>
+      <div className="bg-night mx-10 my-10 w-full h-96 rounded-lg">
+
+
+<div className="flex flex-col mx-3 my-1">
+    <h2 className="flex text-center mx-2 my-5 items-center justify-center bg-white rounded-md text-black h-12">
+        The Facts
+    </h2>
+</div>
+
+
+</div>
     </div>
   );
 }

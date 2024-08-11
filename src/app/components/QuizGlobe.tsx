@@ -106,7 +106,7 @@ export default function QuizGlobe({
       animateIn={true}
       ref={globeEl}
       onGlobeReady={() => setGlobeReady(true)}
-      width={800}
+      width={625}
       height={700}
     />
   );
