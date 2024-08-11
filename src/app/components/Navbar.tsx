@@ -16,7 +16,7 @@ function checkActivePath(path: string): boolean {
 
 export default function Navbar() {
   return (
-    <nav className="flex justify-between items-center my-2 bg-white text-black p-4 font-mono">
+    <nav className="flex justify-between items-center bg-black text-white p-4 font-mono">
         
       <div className="flex-shrink mx-5 flex space-x-10">
         <Link className="hover:text-blue" href="/home">
@@ -37,10 +37,10 @@ export default function Navbar() {
           <span style={{textDecoration: checkActivePath("/about") ? "underline" : "none"}}>About</span>
         </Link>
         <Link className="hover:text-blue" href="https://github.com/vbala29/PopQuiz">
-          <FaGithub size={22}/>
+          <FaGithub size={23}/>
         </Link>
         <Link className="hover:text-blue" href="https://github.com/vbala29/PopQuiz">
-          <FaYoutube size={22}/>
+          <FaYoutube size={23}/>
         </Link>
       </div>
     </nav>
