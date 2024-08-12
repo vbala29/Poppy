@@ -12,12 +12,18 @@ function isNonNegativeInteger(value: string): boolean {
 export default function GameBoard() {
   const [guessInfo, setGuessInfo] = useState<[number, number][]>([]);
   const [country, setCountry] = useState('null');
+  const [facts, setFacts] = useState([])
   const [population, setPopulation] = useState('');
 
   // Route to request today's country
   useEffect(() => {
-    setCountry('France');
-  })
+    fetch("/api/data/daily")
+    .then((res) => res.json())
+    .then((data) => {
+      setCountry(data.country);
+      setFacts(data.facts)
+    });
+  }, [])
   
 
   const handlePopulationInput = (e : ChangeEvent<HTMLInputElement>): void => {
