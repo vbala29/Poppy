@@ -12,7 +12,7 @@ function isNonNegativeInteger(value: string): boolean {
 export default function GameBoard() {
   const [guessInfo, setGuessInfo] = useState<[number, number][]>([]);
   const [country, setCountry] = useState('null');
-  const [population, setPopulation] = useState('Enter population...');
+  const [population, setPopulation] = useState('');
 
   // Route to request today's country
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function GameBoard() {
             </h2>
             
               <form className="flex mx-3.5" onSubmit={submitGuess}>
-                <input type="numeric" placeholder="Enter population..." value={population} onChange={handlePopulationInput} className="bg-white outline outline-1 outline-grey text-grey rounded-md border-none px-3 py-2 my-0.5 h-12" />
+                <input type="numeric" placeholder="Enter population..." value={population} onChange={handlePopulationInput} className="bg-white outline outline-1 outline-grey text-grey rounded-md px-3 py-2 my-0.5" />
                 <button type="submit" className="bg-black text-white rounded-md px-4 py-2 h-12 ml-3 my-0.5 hover:bg-blue">Guess</button>
               </form>
            <div className="my-4 mx-3">
