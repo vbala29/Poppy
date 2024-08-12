@@ -3,19 +3,25 @@ import { Schema, Repository, EntityId } from "redis-om";
 
 export type dailyInfo = {
   country: string;
+  population: number;
   facts: string[];
   [key: string]: any;
 };
 
-const redis = redisModule.createClient({ url: process.env.REDIS_URL });
+const redis =
+  process.env.LOCAL_MODE === "1"
+    ? redisModule.createClient()
+    : redisModule.createClient({ url: process.env.REDIS_URL });
 
 const errorDaily: dailyInfo = {
   country: "N/A",
-  facts: []
+  population: 0,
+  facts: [],
 };
 
 const dailySchema = new Schema("daily", {
   country: { type: "string" },
+  population: { type: "number" },
   facts: { type: "string[]" },
 });
 
@@ -24,6 +30,10 @@ const dailyRepository = new Repository(dailySchema, redis);
 export async function connect() {
   redis.on("error", (err) => console.error("Redis Client Error", err));
   await redis.connect();
+}
+
+export async function disconnect() {
+  await redis.quit();
 }
 
 export async function readDaily() {
