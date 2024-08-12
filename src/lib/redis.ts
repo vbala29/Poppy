@@ -1,5 +1,5 @@
 var redisModule = require("redis");
-import { Schema, Repository } from "redis-om";
+import { Schema, Repository, EntityId } from "redis-om";
 
 export type dailyInfo = {
   country: string;
@@ -48,7 +48,7 @@ export async function saveDaily(daily: dailyInfo) {
   // No need to remove with a removal id array since there should only be
   // one iteration of this for loop anyway.
   for (const d of dailys) {
-    await dailyRepository.remove(d.entityId);
+    await dailyRepository.remove(d[EntityId]);
   }
 
   await dailyRepository.save(daily);
