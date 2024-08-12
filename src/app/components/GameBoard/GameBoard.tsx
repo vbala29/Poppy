@@ -3,6 +3,8 @@
 import QuizGlobe from "@/app/components/QuizGlobe";
 import GuessBoard from "@/app/components/GameBoard/GuessBoard/GuessBoard";
 import { FaPlay, FaMoneyCheckDollar } from "react-icons/fa6";
+import { RiLandscapeLine } from "react-icons/ri";
+import { GiLifeBar } from "react-icons/gi";
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 
 function isNonNegativeInteger(value: string): boolean {
@@ -52,7 +54,7 @@ export default function GameBoard() {
             <input
               type="numeric"
               placeholder="Enter population..."
-              value={population}
+              value={guessedPopulation}
               onChange={handlePopulationInput}
               className="bg-white outline outline-1 outline-grey text-grey rounded-md px-3 py-2 my-0.5"
             />
@@ -83,11 +85,27 @@ export default function GameBoard() {
           <h2 className="flex text-center mx-2 mt-5 mb-2 items-center justify-center bg-white rounded-md text-black h-12">
             The Facts
           </h2>
-          <div className="flex space-x-3 items-center text-white p-4 font-mono">
-            <FaMoneyCheckDollar style={{ color: "white" }} size={36}/>
-            <span>
-              GDP:
-            </span>
+          <div className="flex flex-col text-white p-4 font-mono">
+            <div className="flex space-x-3 items-center mb-6">
+              <FaMoneyCheckDollar style={{ color: "white" }} size={36}/>
+              <span>
+                GDP
+              </span>
+            </div>
+
+            <div className="flex space-x-3 items-center mb-6">
+              <RiLandscapeLine style={{ color: "white" }} size={36}/>
+              <span>
+                Total Area
+              </span>
+            </div>
+
+            <div className="flex space-x-3 items-center mb-6">
+              <GiLifeBar style={{ color: "white" }} size={36}/>
+              <span>
+                Life Expectancy
+              </span>
+            </div>
           </div>
 
         </div>

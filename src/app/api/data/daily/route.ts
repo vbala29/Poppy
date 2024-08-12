@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { saveDaily, readDaily, dailyInfo, connect, disconnect } from '@/lib/redis'
+import { saveDaily, readDaily, DailyInfo, connect, disconnect } from '@/lib/redis'
 
 connect();
 
@@ -9,7 +9,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-    const newDaily : dailyInfo = await request.json();
+    const newDaily : DailyInfo = await request.json();
     await saveDaily(newDaily);
     return NextResponse.json(null, { status: 200 });
 }

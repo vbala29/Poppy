@@ -1,11 +1,17 @@
 var redisModule = require("redis");
 import { Schema, Repository, EntityId } from "redis-om";
 
-export type dailyInfo = {
-  country: string;
-  population: number;
-  facts: string[];
-  [key: string]: any;
+export type DailyFact = {
+  gdp: number,
+  area: number,
+  lifeExpectancy: number
+}
+
+export type DailyInfo = {
+  country: string,
+  population: number,
+  facts: DailyFact,
+  [key: string]: any
 };
 
 const redis =
@@ -13,7 +19,7 @@ const redis =
     ? redisModule.createClient()
     : redisModule.createClient({ url: process.env.REDIS_URL });
 
-const errorDaily: dailyInfo = {
+const errorDaily: DailyInfo = {
   country: "N/A",
   population: 0,
   facts: [],
@@ -51,7 +57,7 @@ export async function readDaily() {
   return dailys[0];
 }
 
-export async function saveDaily(daily: dailyInfo) {
+export async function saveDaily(daily: DailyInfo) {
   await dailyRepository.createIndex();
   const dailys = await dailyRepository.search().return.all();
 
