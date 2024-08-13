@@ -133,3 +133,4 @@ dist
 .env.local
 
 /virtualenv/*
+src/python/virtualenv/
