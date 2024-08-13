@@ -2,9 +2,12 @@ import Guess from "@/app/components/GameBoard/GuessBoard/Guess";
 
 type Props = {
   guessInfo: [number, number][];
+  gameOver: boolean
 };
 
-export default function GuessBoard({ guessInfo }: Props) {
+export const GUESSES_ALLOWED = 6;
+
+export default function GuessBoard({ guessInfo, gameOver }: Props) {
   return (
     <>
       {
@@ -13,7 +16,7 @@ export default function GuessBoard({ guessInfo }: Props) {
         ))
       }
       {(() => {
-            if (guessInfo.length < 6) {
+            if (guessInfo.length < GUESSES_ALLOWED && !gameOver) {
                 return (
                     <>
                     <div className="flex flex-col">
@@ -27,8 +30,8 @@ export default function GuessBoard({ guessInfo }: Props) {
                 return (
                     <>
                     <div className="flex flex-col">
-                        <div className="flex bg-black text-white items-center justify-center text-center rounded-md h-7 mt-6 mb-3 mx-1">
-                        Game Over
+                        <div className="flex bg-black text-white items-center justify-center text-center rounded-md h-7 mt-1 mb-3 mx-1">
+                        Game Over!
                         </div>
                     </div>
                 </>

@@ -26,13 +26,11 @@ type GeoJson = {
 type Props = {
   shadedCountry: string;
   endCoordinates: Coordinate;
-  playGame: boolean;
 };
 
 export default function QuizGlobe({
   shadedCountry,
   endCoordinates,
-  playGame,
 }: Props) {
   const [data, setData] = useState(null);
   const [isLoading, setLoading] = useState(true);

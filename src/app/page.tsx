@@ -1,5 +1,6 @@
 import Head from "next/head";
 import GameBoard from "@/app/components/GameBoard/GameBoard";
+import Modal from "@/app/components/GameBoard/Modal/Modal";
 
 export default function Home() {
   return (
@@ -11,7 +12,7 @@ export default function Home() {
         ></meta>
       </Head>
       <main className="min-h-screen bg-black">
-        <GameBoard />
+      <GameBoard />
       </main>
     </>
   );
