@@ -39,6 +39,13 @@ export default function GameBoard() {
       });
   }, []);
 
+  useEffect(() => {
+    if (guessInfo.length >= GUESSES_ALLOWED) {
+      setGameOver(true);
+      return;
+    }
+  }, [guessInfo])
+
   function handlePopulationInput (e: ChangeEvent<HTMLInputElement>): void {
     setGuessedPopulation(e.target.value);
   };
@@ -66,8 +73,9 @@ export default function GameBoard() {
   function submitGuess (e: FormEvent<HTMLFormElement>): void {
     const MAX_GUESS_VALUE = 1000000000; // 1 billion
     e.preventDefault();
+    if (gameOver) return;
 
-    if (gameOver || guessInfo.length >= GUESSES_ALLOWED) {
+    if (guessInfo.length >= GUESSES_ALLOWED) {
       return;
     }
 

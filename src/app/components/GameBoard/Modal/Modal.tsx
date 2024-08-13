@@ -26,28 +26,29 @@ export default function Modal({
   useEffect(() => {
     setModal(gameOver);
   }, [gameOver]);
-  
 
   const copyResults = () => {
     const now = new Date();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
     const year = now.getFullYear();
 
     let guessesOutput = "";
     for (let [_, tileCount] of guessInfo) {
-        guessesOutput += '🟩'.repeat(tileCount)
-        guessesOutput += '⬜️'.repeat(MAX_TILE_COUNT - tileCount)
-        guessesOutput += '\n'
+      guessesOutput += "🟩".repeat(tileCount);
+      guessesOutput += "⬜️".repeat(MAX_TILE_COUNT - tileCount);
+      guessesOutput += "\n";
     }
 
     navigator.clipboard.writeText(
       `PopQuiz™ (${month}/${day}/${year})\n` +
-      `${answerTileCount === MAX_TILE_COUNT ? guessInfo.length : "X"}/${MAX_TILE_COUNT} ` +
-      `(${(100 * (clientAnswer / actualAnswer)).toFixed(2)}%)\n` +
-      `${guessesOutput}`
-    )
-  }
+        `${
+          answerTileCount === MAX_TILE_COUNT ? guessInfo.length : "X"
+        }/${MAX_TILE_COUNT} ` +
+        `(${(100 * (clientAnswer / actualAnswer)).toFixed(2)}%)\n` +
+        `${guessesOutput}`
+    );
+  };
 
   const width = 5;
   const height = 5;
@@ -73,19 +74,28 @@ export default function Modal({
                 <div className="flex flex-col p-4">
                   <h2 className="text-lg font-semibold">Share Your Results!</h2>
                   <p className="mt-2 text-gray-600">
-                    Your Answer: {clientAnswer.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    Your Answer:{" "}
+                    {clientAnswer
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     <br />
-                    Actual Answer: {actualAnswer.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    Actual Answer:{" "}
+                    {actualAnswer
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                   </p>
                   <p className="mt-4 text-blue">
                     <b> Result</b>
                     <div className="flex text-sm *:items-center justify-center m-2">
                       <div className="mr-1">
                         {`${
-                          answerTileCount === MAX_TILE_COUNT ? guessInfo.length : "X"
-                        }/${MAX_TILE_COUNT} (${
-                          (100 * (clientAnswer / actualAnswer)).toFixed(2)
-                        }%)`}
+                          answerTileCount === MAX_TILE_COUNT
+                            ? guessInfo.length
+                            : "X"
+                        }/${MAX_TILE_COUNT} (${(
+                          100 *
+                          (clientAnswer / actualAnswer)
+                        ).toFixed(2)}%)`}
                       </div>
                       {[...Array(MAX_TILE_COUNT)].map((_, i) => {
                         if (i < answerTileCount) {
