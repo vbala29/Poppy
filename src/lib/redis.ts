@@ -1,5 +1,6 @@
 var redisModule = require("redis");
 import { Schema, Repository, EntityId } from "redis-om";
+import { Coordinate } from "@/lib/cron/facts"
 
 export type DailyFact = {
   gdp: number, // In million US$
@@ -11,6 +12,8 @@ export type DailyInfo = {
   country: string,
   population: number,
   facts: DailyFact,
+  lat: number,
+  lon: number,
   [key: string]: any
 };
 
@@ -22,6 +25,8 @@ const redis =
 const errorDaily: DailyInfo = {
   country: "N/A",
   population: 0,
+  lat: 0,
+  lon: 0,
   facts: {
     gdp: 0,
     area: 0,
@@ -29,9 +34,12 @@ const errorDaily: DailyInfo = {
   }
 };
 
+// Note Redis-OM doesn't allow for nested objects as of yet
 const dailySchema = new Schema("daily", {
   country: { type: "string" },
   population: { type: "number" },
+  lat: { type: "number" },
+  lon: { type: "number" },
   facts: { type: "string[]" },
 });
 

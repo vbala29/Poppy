@@ -2,6 +2,8 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState, useRef } from "react";
+import { Coordinate } from "@/lib/cron/facts";
+
 let Globe = () => null;
 if (typeof window !== "undefined") Globe = require("react-globe.gl").default;
 
@@ -20,20 +22,15 @@ type GeoJson = {
   [key: string]: any;
 };
 
-type Coordinate = {
-  latitude: Number;
-  longitude: Number;
-};
+
 type Props = {
   shadedCountry: string;
-  startCoordinates: Coordinate;
   endCoordinates: Coordinate;
   playGame: boolean;
 };
 
 export default function QuizGlobe({
   shadedCountry,
-  startCoordinates,
   endCoordinates,
   playGame,
 }: Props) {
@@ -59,23 +56,12 @@ export default function QuizGlobe({
 
     globeEl.current.pointOfView(
       {
-        lat: startCoordinates.latitude,
-        lng: startCoordinates.longitude,
+        lat: endCoordinates.lat,
+        lng: endCoordinates.lon,
         altitude: 2.5,
       },
       spinTime
     );
-
-    setTimeout(() => {
-      globeEl.current.pointOfView(
-        {
-          lat: endCoordinates.latitude,
-          lng: endCoordinates.longitude,
-          altitude: 2.5,
-        },
-        spinTime
-      );
-    }, spinTime);
 
     // globeEl.current.controls().autoRotate = true;
     // globeEl.current.controls().autoRotateSpeed = 1;

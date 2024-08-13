@@ -7,6 +7,7 @@ import { RiLandscapeLine } from "react-icons/ri";
 import { GiLifeBar } from "react-icons/gi";
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { DailyFact } from "@/lib/redis";
+import { Coordinate } from "@/lib/cron/facts"
 
 function isNonNegativeInteger(value: string): boolean {
   return /^\d+$/.test(value);
@@ -18,6 +19,7 @@ export default function GameBoard() {
   const [facts, setFacts] = useState<DailyFact | null>(null);
   const [population, setPopulation] = useState(0);
   const [guessedPopulation, setGuessedPopulation] = useState("");
+  const [countryCoordinates, setCountryCoordinates] = useState<Coordinate>({ lat: 0, lon: 0})
 
   // Route to request today's country
   useEffect(() => {
@@ -27,6 +29,7 @@ export default function GameBoard() {
         setCountry(data.country);
         setPopulation(data.population);
         setFacts(data.facts);
+        setCountryCoordinates({ lat: data.lat, lon: data.lon })
       });
   }, []);
 
@@ -77,9 +80,8 @@ export default function GameBoard() {
 
       <div className="">
         <QuizGlobe
-          shadedCountry="Albania"
-          startCoordinates={{ latitude: 37.0902, longitude: -95.7129 }}
-          endCoordinates={{ latitude: 41.1533, longitude: 20.1683 }}
+          shadedCountry={country}
+          endCoordinates={countryCoordinates}
           playGame={true}
         />
       </div>

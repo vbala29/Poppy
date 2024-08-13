@@ -1,7 +1,6 @@
-import * as cheerio from 'cheerio';
+import * as cheerio from "cheerio";
 import { DailyInfo } from "@/lib/redis";
 import { promises as fs } from "fs";
-import { CronJob } from "cron";
 
 type RestCountriesResponse = {
   area: number;
@@ -19,12 +18,32 @@ type GDPData = {
   gdp: number;
 };
 
+export type Coordinate = {
+    lat: number;
+    lon: number;
+  };
+
+export async function getCountryCoordinates(
+    country: string
+  ): Promise<Coordinate> {
+    const res = await fetch(
+      `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(country)}&key=${process.env.OPEN_CAGE_API_KEY}`
+    ).then((res) => res.json()).catch(err => console.log(err));
+
+    if (res.results[0].geometry) {
+      return { lat: res.results[0].geometry.lat, lon: res.results[0].geometry.lng }
+    } else {
+      console.log(`Unable to retrieve coordinates for ${country}`);
+      return { lat: 0, lon: 0 };
+    }
+  }
+  
 async function getLifeExpectancies(
   country: string
 ): Promise<LifeExpectancyData> {
   const URL =
     "http://en.wikipedia.org/wiki/List_of_countries_by_life_expectancy";
-  let response = await fetch(URL, { cache: 'no-store' });
+  let response = await fetch(URL, { cache: "no-store" });
   let text = await response.text();
   let $ = cheerio.load(text);
   let table = $("table.wikitable").first();
@@ -53,7 +72,7 @@ async function getLifeExpectancies(
 async function getGDP(country: string): Promise<GDPData> {
   const URL =
     "https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)";
-  let response = await fetch(URL, { cache: 'no-store' });
+  let response = await fetch(URL, { cache: "no-store" });
   let text = await response.text();
   let $ = cheerio.load(text);
   let table = $("table.wikitable").first();
@@ -71,7 +90,7 @@ async function getGDP(country: string): Promise<GDPData> {
       return;
     }
     let gdp = $(columns[1]).text().trim();
-    gdpData = { country, gdp: parseFloat(gdp.replace(/,/g, '')) };
+    gdpData = { country, gdp: parseFloat(gdp.replace(/,/g, "")) };
     return false;
   });
 
@@ -113,9 +132,13 @@ export default async function updateDaily(): Promise<number> {
     countryName
   );
 
+  let coordinateData: Coordinate = await getCountryCoordinates(countryName);
+
   let dailyInfo: DailyInfo = {
     country: countryName,
     population: restCountriesData.population,
+    lat: coordinateData.lat,
+    lon: coordinateData.lon,
     facts: {
       area: restCountriesData.area,
       gdp: gdpData.gdp,
@@ -136,12 +159,14 @@ export default async function updateDaily(): Promise<number> {
         console.log(`Updated daily information: ${JSON.stringify(res)}`);
       } else {
         updateCode = res.status;
-        console.log(`Unable to update daily information: ${JSON.stringify(res)}`);
+        console.log(
+          `Unable to update daily information: ${JSON.stringify(res)}`
+        );
       }
     })
     .catch((err) => {
       updateCode = 500;
-      console.log(`Unable to update daily information: ${JSON.stringify(err)}`);
+      console.log(`Unable to update daily information error ocurred: ${err.toString()}`);
     });
 
   return updateCode;
