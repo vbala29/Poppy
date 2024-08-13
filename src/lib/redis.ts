@@ -2,9 +2,9 @@ var redisModule = require("redis");
 import { Schema, Repository, EntityId } from "redis-om";
 
 export type DailyFact = {
-  gdp: number,
-  area: number,
-  lifeExpectancy: number
+  gdp: number, // In million US$
+  area: number, // In km^2
+  lifeExpectancy: number // In years
 }
 
 export type DailyInfo = {
@@ -22,7 +22,11 @@ const redis =
 const errorDaily: DailyInfo = {
   country: "N/A",
   population: 0,
-  facts: [],
+  facts: {
+    gdp: 0,
+    area: 0,
+    lifeExpectancy: 0
+  }
 };
 
 const dailySchema = new Schema("daily", {
