@@ -9,7 +9,7 @@ export default function GuessBoard({ guessInfo }: Props) {
     <>
       {
         guessInfo.map(([population, tilesToFill], index) => (
-            <Guess population={population} tilesToFill={tilesToFill} />
+            <Guess key={index} population={population} tilesToFill={tilesToFill} />
         ))
       }
       {(() => {

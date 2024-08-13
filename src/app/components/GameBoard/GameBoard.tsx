@@ -6,6 +6,7 @@ import { FaPlay, FaMoneyCheckDollar } from "react-icons/fa6";
 import { RiLandscapeLine } from "react-icons/ri";
 import { GiLifeBar } from "react-icons/gi";
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
+import { DailyFact } from "@/lib/redis";
 
 function isNonNegativeInteger(value: string): boolean {
   return /^\d+$/.test(value);
@@ -14,7 +15,7 @@ function isNonNegativeInteger(value: string): boolean {
 export default function GameBoard() {
   const [guessInfo, setGuessInfo] = useState<[number, number][]>([]);
   const [country, setCountry] = useState("null");
-  const [facts, setFacts] = useState([]);
+  const [facts, setFacts] = useState<DailyFact | null>(null);
   const [population, setPopulation] = useState(0);
   const [guessedPopulation, setGuessedPopulation] = useState("");
 
@@ -34,10 +35,13 @@ export default function GameBoard() {
   };
 
   const submitGuess = (e: FormEvent<HTMLFormElement>): void => {
+    const MAX_GUESS_VALUE = 1000000000; // 1 billion
     e.preventDefault();
-
-    if (isNonNegativeInteger(guessedPopulation)) {
-      setGuessInfo((g) => [...g, [Number(guessedPopulation), 3]]);
+    let parsedGuess = guessedPopulation.replace(/,/g, '');
+    if (isNonNegativeInteger(parsedGuess)) {
+      if (Number(parsedGuess) <= MAX_GUESS_VALUE) {
+        setGuessInfo((g) => [...g, [Number(parsedGuess), 3]]);
+      }
     }
   };
 
@@ -86,24 +90,37 @@ export default function GameBoard() {
             The Facts
           </h2>
           <div className="flex flex-col text-white p-4 font-mono">
-            <div className="flex space-x-3 items-center mb-6">
-              <FaMoneyCheckDollar style={{ color: "white" }} size={36}/>
+            <div className="flex space-x-3 items-center mb-7">
+              <FaMoneyCheckDollar style={{ color: "white" }} size={45}/>
               <span>
                 GDP
+                <br />
+                ${
+                  (facts !== null) ? (facts.gdp * 1000000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 'N/A'
+                }
               </span>
             </div>
 
-            <div className="flex space-x-3 items-center mb-6">
-              <RiLandscapeLine style={{ color: "white" }} size={36}/>
+            <div className="flex space-x-3 items-center mb-7">
+              <RiLandscapeLine style={{ color: "white" }} size={45}/>
               <span>
                 Total Area
+                <br />
+                {
+                  (facts !== null) ? facts.area : 'N/A'
+                } km<sup>2</sup>
+                
               </span>
             </div>
 
-            <div className="flex space-x-3 items-center mb-6">
-              <GiLifeBar style={{ color: "white" }} size={36}/>
+            <div className="flex space-x-3 items-center mb-7">
+              <GiLifeBar style={{ color: "white" }} size={45}/>
               <span>
                 Life Expectancy
+                <br />
+                {
+                  (facts !== null) ? facts.lifeExpectancy : 'N/A'
+                } Years
               </span>
             </div>
           </div>

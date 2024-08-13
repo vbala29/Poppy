@@ -22,7 +22,7 @@ export default function Tiles({
               <div
                 key={i}
                 className={`bg-grey w-${width} h-${height} mx-2 ${styles.flip}`}
-                style={{ animationDelay: `${i * 100}ms` }}
+                style={{ animationDelay: `${(i + 1) * 100}ms`, height: height*4, width: width*4 }}
               ></div>
             );
           } else {
@@ -30,6 +30,7 @@ export default function Tiles({
               <div
                 key={i}
                 className={`bg-grey w-${width} h-${height} mx-2`}
+                style={{ height: height*4, width: width*4 }}
               ></div>
             );
           }

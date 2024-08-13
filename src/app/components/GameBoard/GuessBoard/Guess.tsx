@@ -9,8 +9,8 @@ export default function Guess({ population, tilesToFill } : Props) {
   return (
     <div className="flex flex-col mb-3">
         <div className="flex items-center justify-center">
-            <div className="bg-black text-white text-center rounded-md h-7 w-32 mx-1">
-                <h2 className="outline outline-1 outline-white px-6 rounded-md my-0.5">{population}</h2> 
+            <div className="flex items-center justify-center outline outline-1 outline-white bg-black text-white text-sm text-center text rounded-md h-8 w-32 mx-1 my-1">
+                <h2 className="rounded-md my-0.5">{population.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</h2> 
             </div>
             <div className="ml-3 rounded-md">
                 <Tiles width={5} height={5} tileCount={5} tilesToFill={tilesToFill} />
