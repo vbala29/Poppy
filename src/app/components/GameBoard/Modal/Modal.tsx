@@ -67,12 +67,12 @@ export default function Modal({
               <div className="flex p-2 font-mono">
                 <button
                   onClick={closeModal}
-                  className="bg-night text-white w-8 h-8 ml-1 mr-6 my-1 rounded-md hover:bg-blue-600"
+                  className="bg-night hover:shadow-lg shadow-grey text-white w-8 h-8 ml-1 mr-6 my-1 rounded-md hover:bg-blue-600"
                 >
                   X
                 </button>
                 <div className="flex flex-col p-4">
-                  <h2 className="text-lg font-semibold">Share Your Results!</h2>
+                  <h2 className="text-lg font-semibold">{answerTileCount === MAX_TILE_COUNT ? "Winner!" : "Try Again Tomorrow!"}</h2>
                   <p className="mt-2 text-gray-600">
                     Your Answer:{" "}
                     {clientAnswer
@@ -123,7 +123,7 @@ export default function Modal({
                     </div>
                     <button
                       onClick={copyResults}
-                      className="bg-blue text-white rounded-md w-32 h-8 mt-3 px-2 text-sm hover:bg-blue-600"
+                      className="bg-blue hover:shadow-lg shadow-blue text-white rounded-md w-32 h-8 mt-3 px-2 text-sm"
                     >
                       <b>Copy Results</b>
                     </button>
