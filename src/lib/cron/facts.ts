@@ -71,7 +71,6 @@ async function getGDP(country: string): Promise<GDPData> {
       return;
     }
     let gdp = $(columns[1]).text().trim();
-    console.log(gdp)
     gdpData = { country, gdp: parseFloat(gdp.replace(/,/g, '')) };
     return false;
   });
@@ -123,9 +122,9 @@ export default async function updateDaily(): Promise<number> {
       lifeExpectancy: lifeExpectancyData.lifeExpectancy,
     },
   };
-  console.log(dailyInfo)
+
   let updateCode = 200;
-  fetch(`http:${process.env.SITE_URL}/api/data/daily`, {
+  fetch(`http://${process.env.SITE_URL}/api/data/daily`, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -134,15 +133,15 @@ export default async function updateDaily(): Promise<number> {
   })
     .then((res) => {
       if (res.status === 200) {
-        console.log(`Updated daily information:\n${JSON.stringify(dailyInfo)}`);
+        console.log(`Updated daily information: ${JSON.stringify(res)}`);
       } else {
         updateCode = res.status;
-        console.log(`Unable to update daily information\n${JSON.stringify(res)}`);
+        console.log(`Unable to update daily information: ${JSON.stringify(res)}`);
       }
     })
     .catch((err) => {
       updateCode = 500;
-      console.log(`Unable to update daily information\n${JSON.stringify(err)}`);
+      console.log(`Unable to update daily information: ${JSON.stringify(err)}`);
     });
 
   return updateCode;
