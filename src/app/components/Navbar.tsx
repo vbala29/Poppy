@@ -40,7 +40,7 @@ export default function Navbar() {
         </Link>
       </div>
 
-      <div className="flex flex-grow items-center justify-center space-x-3 p-3">
+      <div className="flex flex-grow items-center justify-center space-x-3 p-3 mr-4">
         <FaGamepad size={30} />
         <span className="text-3xl font-mono font-bold text-blue-800">
           PopQuiz

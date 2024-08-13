@@ -11,6 +11,10 @@ import { Coordinate } from "@/lib/cron/facts"
 import Modal from "@/app/components/GameBoard/Modal/Modal";
 import { GUESSES_ALLOWED } from "@/app/components/GameBoard/GuessBoard/GuessBoard";
 
+type Props = {
+  rendered: () => void;
+}
+
 export const MAX_TILE_COUNT = 5;
 const TILE_COUNT_SCALER = 3.4;
 
@@ -18,7 +22,7 @@ function isNonNegativeInteger(value: string): boolean {
   return /^\d+$/.test(value);
 }
 
-export default function GameBoard() {
+export default function GameBoard({ rendered }: Props) {
   const [guessInfo, setGuessInfo] = useState<[number, number][]>([]);
   const [country, setCountry] = useState("null");
   const [facts, setFacts] = useState<DailyFact | null>(null);
@@ -58,7 +62,6 @@ export default function GameBoard() {
       intervals.push(Math.pow(TILE_COUNT_SCALER, scaledPop - i));
     }
 
-    console.log(intervals)
     let tileCount = 0;
 
     for (const i of intervals) {
@@ -131,6 +134,7 @@ export default function GameBoard() {
           <QuizGlobe
             shadedCountry={country}
             endCoordinates={countryCoordinates}
+            rendered={rendered}
           />
         </div>
 

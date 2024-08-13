@@ -22,15 +22,16 @@ type GeoJson = {
   [key: string]: any;
 };
 
-
 type Props = {
   shadedCountry: string;
   endCoordinates: Coordinate;
+  rendered: () => void;
 };
 
 export default function QuizGlobe({
   shadedCountry,
   endCoordinates,
+  rendered,
 }: Props) {
   const [data, setData] = useState(null);
   const [isLoading, setLoading] = useState(true);
@@ -46,20 +47,17 @@ export default function QuizGlobe({
       });
   }, []);
 
-  const spinTime = 3000;
+  const spinTime = 2000;
   useEffect(() => {
     if (!globeEl.current) {
       return;
     }
 
-    globeEl.current.pointOfView(
-      {
-        lat: endCoordinates.lat,
-        lng: endCoordinates.lon,
-        altitude: 2.5,
-      },
-      spinTime
-    );
+    globeEl.current.pointOfView({
+      lat: endCoordinates.lat,
+      lng: endCoordinates.lon,
+      altitude: 2.5,
+    }, spinTime);
 
     // globeEl.current.controls().autoRotate = true;
     // globeEl.current.controls().autoRotateSpeed = 1;
@@ -70,7 +68,7 @@ export default function QuizGlobe({
 
   let countriesJson: GeoJson = data;
 
-  const countries : { country: string }[] = [];
+  const countries: { country: string }[] = [];
   for (const country of countriesJson.features) {
     countries.push({ country: country.properties.NAME });
   }
@@ -79,17 +77,20 @@ export default function QuizGlobe({
     <Globe
       globeImageUrl="//unpkg.com/three-globe/example/img/earth-dark.jpg"
       polygonsData={countriesJson.features}
-      polygonCapColor={(country : GeoJsonFeature): string =>
+      polygonCapColor={(country: GeoJsonFeature): string =>
         country.properties.NAME === shadedCountry ? "blue" : "grey"
       }
       polygonSideColor={() => "white"}
       polygonStrokeColor={() => "white"}
-      polygonLabel={(country : GeoJsonFeature): string =>
+      polygonLabel={(country: GeoJsonFeature): string =>
         `<span style="font-family: ui-monospace;"> ${country.properties.NAME} </span>`
       }
       animateIn={true}
       ref={globeEl}
-      onGlobeReady={() => setGlobeReady(true)}
+      onGlobeReady={() => {
+        rendered();
+        setGlobeReady(true);
+      }}
       width={625}
       height={700}
     />
