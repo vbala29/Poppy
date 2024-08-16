@@ -85,8 +85,6 @@ export default function QuizGlobe({
     countries.push({ country: country.properties.NAME });
   }
 
-  console.log(globeWidth)
-  console.log(globeHeight)
   return (
     <Globe
       globeImageUrl="//unpkg.com/three-globe/example/img/earth-dark.jpg"

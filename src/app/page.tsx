@@ -21,9 +21,9 @@ export default function Home() {
         ></meta>
       </Head>
 
-      <main className="min-h-screen bg-black">
-      <LoadingScreen display={!gameBoardRendered} />
-      <GameBoard rendered={rendered} ready={gameBoardRendered} />
+      <main className="bg-black">
+        <LoadingScreen display={!gameBoardRendered} />
+        <GameBoard rendered={rendered} ready={gameBoardRendered} />
       </main>
     </>
   );

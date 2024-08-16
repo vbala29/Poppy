@@ -101,17 +101,41 @@ export default function GameBoard({ rendered, ready }: Props) {
     }
   }
 
+  function getBestGuessAnswer() {
+    let bestGuess = 0;
+    let bestGuessDifference = Number.MAX_VALUE;
+    for (let [guess, _] of guessInfo) {
+      if (Math.abs(population - guess) < bestGuessDifference) {
+        bestGuess = guess;
+        bestGuessDifference = Math.abs(population - guess)
+      }
+    }
+
+    return bestGuess;
+  }
+
+  function getBestTileCount() {
+    let bestTileCount = 0;
+    for (let [_, tileCount] of guessInfo) {
+      if (tileCount > bestTileCount) {
+        bestTileCount = tileCount;
+      }
+    }
+
+    return bestTileCount;
+  }
+
   return (
     <>
       <div className="z-50">
         <Modal
           gameOver={gameOver}
           clientAnswer={
-            guessInfo.length > 0 ? guessInfo[guessInfo.length - 1][0] : 0
+            guessInfo.length > 0 ? getBestGuessAnswer() : 0
           }
           actualAnswer={population}
           answerTileCount={
-            guessInfo.length > 0 ? guessInfo[guessInfo.length - 1][1] : 0
+            guessInfo.length > 0 ? getBestTileCount() : 0
           }
           guessInfo={guessInfo}
         />
@@ -128,20 +152,20 @@ export default function GameBoard({ rendered, ready }: Props) {
                     </h2>
 
                     <form
-                      className="flex mx-3.5 items-center"
+                      className="flex mx-3.5 items-center text-sm"
                       onSubmit={submitGuess}
                     >
                       <input
                         type="numeric"
-                        placeholder="Enter population..."
+                        placeholder="Enter population"
                         value={guessedPopulation}
                         onChange={handlePopulationInput}
-                        className="bg-white outline outline-1 outline-grey h-fit text-grey rounded-md px-3 py-4 my-0.5"
+                        className="bg-white outline outline-1 outline-grey h-fit w-2/3 text-grey rounded-md px-3 py-4 my-0.5"
                         style={{ minWidth: 0 }}
                       />
                       <button
                         type="submit"
-                        className="bg-black text-white rounded-md px-4 h-fit w-fit py-3.5 ml-3 my-0.5 hover:bg-blue"
+                        className="bg-black text-white rounded-md px-4 h-fit w-1/3 py-3.5 ml-3 my-0.5 hover:bg-blue"
                       >
                         Guess
                       </button>
