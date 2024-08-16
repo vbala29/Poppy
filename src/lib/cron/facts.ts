@@ -57,7 +57,7 @@ async function getLifeExpectancies(
     if (columns.length < 2) return;
 
     let countryInCol = $(columns[0]).text().trim();
-    if (countryInCol !== country) {
+    if (!countryInCol.startsWith(country)) {
       return;
     }
     let lifeExpectancy = $(columns[1]).text().trim();
@@ -86,7 +86,7 @@ async function getGDP(country: string): Promise<GDPData> {
     if (columns.length < 2) return;
 
     let countryInCol = $(columns[0]).text().trim();
-    if (countryInCol !== country) {
+    if (!countryInCol.startsWith(country)) {
       return;
     }
     let gdp = $(columns[1]).text().trim();

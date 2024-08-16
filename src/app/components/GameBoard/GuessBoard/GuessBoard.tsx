@@ -20,7 +20,7 @@ export default function GuessBoard({ guessInfo, gameOver }: Props) {
                 return (
                     <>
                     <div className="flex flex-col">
-                        <div className="flex bg-black text-white items-center justify-center text-center rounded-md h-7 mt-1 mb-3 mx-1">
+                        <div className="flex bg-black text-white items-center justify-center text-center rounded-md h-fit py-1 mt-1 mb-3 mx-1">
                         Guess {guessInfo.length + 1} / 6
                         </div>
                     </div>
@@ -30,7 +30,7 @@ export default function GuessBoard({ guessInfo, gameOver }: Props) {
                 return (
                     <>
                     <div className="flex flex-col">
-                        <div className="flex bg-black text-white items-center justify-center text-center rounded-md h-7 mt-1 mb-3 mx-1">
+                        <div className="flex bg-black text-white items-center justify-center text-center rounded-md h-fit py-1 mt-1 mb-3 mx-1">
                         Game Over!
                         </div>
                     </div>

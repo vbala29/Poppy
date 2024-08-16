@@ -23,7 +23,7 @@ export default function Home() {
 
       <main className="min-h-screen bg-black">
       <LoadingScreen display={!gameBoardRendered} />
-      <GameBoard rendered={rendered} />
+      <GameBoard rendered={rendered} ready={gameBoardRendered} />
       </main>
     </>
   );

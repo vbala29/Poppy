@@ -28,6 +28,9 @@ type Props = {
   rendered: () => void;
 };
 
+const globeWidthRatio = 2.15;
+const globeHeightRatio = 1.10;
+
 export default function QuizGlobe({
   shadedCountry,
   endCoordinates,
@@ -36,9 +39,18 @@ export default function QuizGlobe({
   const [data, setData] = useState(null);
   const [isLoading, setLoading] = useState(true);
   const [globeReady, setGlobeReady] = useState(false);
+  const [globeWidth, setGlobeWidth] = useState(0);
+  const [globeHeight, setGlobeHeight] = useState(0);
   const globeEl = useRef();
 
+  function handleResize() {
+    setGlobeWidth(window.innerWidth / globeWidthRatio);
+    setGlobeHeight(window.innerHeight / globeHeightRatio);
+  }
+
   useEffect(() => {
+    window.addEventListener("resize", handleResize, false);
+    handleResize();
     fetch("/api/data/globe")
       .then((res) => res.json())
       .then((data) => {
@@ -73,6 +85,8 @@ export default function QuizGlobe({
     countries.push({ country: country.properties.NAME });
   }
 
+  console.log(globeWidth)
+  console.log(globeHeight)
   return (
     <Globe
       globeImageUrl="//unpkg.com/three-globe/example/img/earth-dark.jpg"
@@ -91,8 +105,8 @@ export default function QuizGlobe({
         rendered();
         setGlobeReady(true);
       }}
-      width={625}
-      height={700}
+      width={globeWidth}
+      height={globeHeight}
     />
   );
 }
