@@ -11,6 +11,9 @@ import { Coordinate } from "@/lib/cron/facts";
 import Modal from "@/app/components/GameBoard/Modal/Modal";
 import { GUESSES_ALLOWED } from "@/app/components/GameBoard/GuessBoard/GuessBoard";
 
+export type TileCount = number;
+export type Guess = number;
+
 type Props = {
   rendered: () => void;
   ready: boolean;
@@ -24,7 +27,7 @@ function isNonNegativeInteger(value: string): boolean {
 }
 
 export default function GameBoard({ rendered, ready }: Props) {
-  const [guessInfo, setGuessInfo] = useState<[number, number][]>([]);
+  const [guessInfo, setGuessInfo] = useState<[Guess, TileCount][]>([]);
   const [country, setCountry] = useState("null");
   const [facts, setFacts] = useState<DailyFact | null>(null);
   const [population, setPopulation] = useState(0);
@@ -58,7 +61,7 @@ export default function GameBoard({ rendered, ready }: Props) {
     setGuessedPopulation(e.target.value);
   }
 
-  function calculateTileCount(guess: number): number {
+  function calculateTileCount(guess: Guess): TileCount {
     let scaledPop = Math.log(population) / Math.log(TILE_COUNT_SCALER);
 
     let intervals: number[] = [];

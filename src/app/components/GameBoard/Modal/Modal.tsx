@@ -1,13 +1,13 @@
 import React, { useState, useEffect, act } from "react";
-import { MAX_TILE_COUNT } from "../GameBoard";
+import { Guess, MAX_TILE_COUNT, TileCount } from "../GameBoard";
 import styles from "../styles.module.css";
 
 type Props = {
   gameOver: boolean;
-  actualAnswer: number;
-  clientAnswer: number;
-  answerTileCount: number;
-  guessInfo: [number, number][];
+  actualAnswer: Guess;
+  clientAnswer: Guess;
+  answerTileCount: TileCount;
+  guessInfo: [Guess, TileCount][];
 };
 
 export default function Modal({

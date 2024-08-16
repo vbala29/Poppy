@@ -1,10 +1,15 @@
 "use client"
 
 import Head from "next/head";
+import { useEffect, useState } from "react";
 import { FaRegCopy } from "react-icons/fa6";
 
 export default function Home() {
-    const code = "ABD3428S";
+    const [code, setCode] = useState('Loading');
+    useEffect(() => {
+        fetch("/api/multiplayer/create", { method: "POST" }).then(res => res.json()).then(data => setCode(data.code));
+    }, [])
+
     const copyResults = () => {
         navigator.clipboard.writeText(code)
     };
@@ -40,7 +45,7 @@ export default function Home() {
             </div>
             <div className="flex text-center items-center justify-center">
               <a
-                href="/multiplayer/create"
+                href={`/multiplayer/${code}`}
                 className="bg-blue w-1/3 text-white text-sm rounded-md h-fit py-4 mx-3 mb-6 hover:bg-black"
               >
                 <button>Join Game</button>

@@ -1,12 +1,14 @@
 "use client";
 
 import Head from "next/head";
+import { ChangeEvent, useState } from "react";
 
 export default function Home() {
-  const code = "ABD3428S";
-  const copyResults = () => {
-    navigator.clipboard.writeText(code);
-  };
+  const [code, setCode] = useState('');
+  
+  function handleCodeInput(e: ChangeEvent<HTMLInputElement>): void {
+    setCode(e.target.value);
+  }
 
   return (
     <>
@@ -30,8 +32,8 @@ export default function Home() {
                 <input
                   type="text"
                   placeholder="Enter Game Code"
-                //   value={}
-                //   onChange={}
+                  value={code}
+                  onChange={handleCodeInput}
                   className="bg-white outline outline-1 outline-grey h-fit text-grey rounded-md px-3 py-4 my-1"
                   style={{ minWidth: 0 }}
                 />
@@ -39,7 +41,7 @@ export default function Home() {
             </div>
             <div className="flex text-center items-center justify-center">
               <a
-                href="/multiplayer/create"
+                href={`/multiplayer/${code}`}
                 className="bg-blue w-1/3 text-white text-sm rounded-md h-fit py-4 mx-3 mb-6 hover:bg-black"
               >
                 <button>Join Game</button>

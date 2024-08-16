@@ -1,7 +1,8 @@
 import Guess from "@/app/components/GameBoard/GuessBoard/Guess";
+import { Guess as GuessType, TileCount } from "../GameBoard";
 
 type Props = {
-  guessInfo: [number, number][];
+  guessInfo: [GuessType, TileCount][];
   gameOver: boolean
 };
 

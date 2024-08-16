@@ -1,6 +1,5 @@
 var redisModule = require("redis");
 import { Schema, Repository, EntityId } from "redis-om";
-import { Coordinate } from "@/lib/cron/facts"
 
 export type DailyFact = {
   gdp: number, // In million US$
@@ -15,6 +14,15 @@ export type DailyInfo = {
   lat: number,
   lon: number,
   [key: string]: any
+};
+
+
+// Please redis-om, let me use nested objects :(
+export type MultiplayerGame = {
+  code: string,
+  names: string[],
+  guessInfo: string[], // Comma separated "Guess, TileCount" since Redis Om doesn't have [number, number][] type
+  points: number[]
 };
 
 const redis =
@@ -43,7 +51,15 @@ const dailySchema = new Schema("daily", {
   facts: { type: "string[]" },
 });
 
+const multiplayerSchema = new Schema("multiplayer", {
+  code: { type: "string" },
+  names: { type: "string[]" },
+  guessInfo: { type: "string[]" },
+  points: { type: "number[]" }
+});
+
 const dailyRepository = new Repository(dailySchema, redis);
+const multiplayerRepository = new Repository(multiplayerSchema, redis);
 
 export async function connect() {
   redis.on("error", (err) => console.error("Redis Client Error", err));
@@ -80,4 +96,44 @@ export async function saveDaily(daily: DailyInfo) {
   }
 
   await dailyRepository.save(daily);
+}
+
+// Returns false if a game with the proposed code already exists.
+export async function createNewGame(code: string) : Promise<boolean> {
+  await multiplayerRepository.createIndex();
+  const existingGames : Record<string, any>[] = await multiplayerRepository.search().where('code').equals(code).return.all();
+  if (existingGames.length > 0) {
+    return false;
+  } 
+
+  const newGame = {
+    code,
+    names: [],
+    guessInfo: [],
+    points: []
+  }
+  
+  await multiplayerRepository.save(newGame);
+
+  return true;
+}
+
+export async function joinGame(code: string, name: string) {
+  await multiplayerRepository.createIndex();
+  let existingGames : Record<string, any>[] = await multiplayerRepository.search().where('code').equals(code).return.all();
+
+  if (existingGames.length == 0) {
+    console.error(`Wasn't able to find game with code: ${code}`);
+    return;
+  } else if (existingGames.length > 1) {
+    console.error("Found multiple games with same code");
+    return;
+  }
+
+  let game = existingGames[0];
+  game.names.push(name);
+  game.guessInfo.push('');
+  game.points.push(0);
+  
+  await multiplayerRepository.save(game);
 }
