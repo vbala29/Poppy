@@ -1,13 +1,18 @@
 "use client"
 
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaRegCopy } from "react-icons/fa6";
 
 export default function Home() {
     const [code, setCode] = useState('Loading');
+    const isMounted = useRef(false); // Used for avoiding React Strict mode running useEffect twice, leading to two codes being created
+
     useEffect(() => {
-        fetch("/api/multiplayer/create", { method: "POST" }).then(res => res.json()).then(data => setCode(data.code));
+        if (!isMounted.current) {
+            fetch("/api/multiplayer/create", { method: "POST" }).then(res => res.json()).then(data => setCode(data.code));
+        }
+        isMounted.current = true;
     }, [])
 
     const copyResults = () => {
