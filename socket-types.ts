@@ -9,11 +9,11 @@ export type MultiplayerUser = {
 }
 
 export type MultiplayerGame = {
-  users: Record<UserName, MultiplayerUser>
+  [users: UserName]: MultiplayerUser
 
 }
 export type MultiplayerData = {
-  games: Record<Code, MultiplayerGame>
+  [games: Code]: MultiplayerGame
 }
 
 export type PLAYERS_BODY = MultiplayerGame;

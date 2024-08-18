@@ -11,19 +11,7 @@ const port = 3000;
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
-// type MultiplayerUser = {
-//   guessInfo: [Guess, TileCount]
-//   points: number,
-// }
-//
-// type MultiplayerGame = {
-//   users: Record<UserName, MultiplayerUser>
-//
-// }
-// type MultiplayerData = {
-//   games: Record<Code, MultiplayerGame>
-// }
-
+// See socket-types.ts
 let multiplayerData = {
   games: {},
 };
@@ -61,9 +49,6 @@ app.prepare().then(() => {
     socket.on("disconnect", () => {
       console.log("Client disconnected");
     });
-
-    // Send list of users currently in game, including themselves
-    socket.to(code).emit(PLAYERS, JSON.stringify(multiplayerData.games[code]));
   });
 
   server.post("/api/multiplayer/create", (req, res) => {
@@ -87,6 +72,8 @@ app.prepare().then(() => {
         const code = body.code;
         const name = body.name;
 
+        console.log("name: " + name)
+
         if (!multiplayerData.games.hasOwnProperty(code)) {
           res.status(401).send(`Invalid game code provided: ${code}`);
           return;
@@ -99,15 +86,18 @@ app.prepare().then(() => {
               `User with this username (${name}) already exists in game: ${code}`
             );
         }
-
+        // Update data store
         multiplayerData.games[code][name] = { guessInfo: null, points: 0 };
+
+        // Send list of users currently in game, including themselves
+        io.to(code).emit(PLAYERS, JSON.stringify(multiplayerData.games[code]));
         res.status(200).end();
       } catch (error) {
         res.status(400).json({ error: "Invalid JSON" }).end();
       }
     });
   });
-  
+
   server.all("*", (req, res) => handler(req, res));
 
   httpServer

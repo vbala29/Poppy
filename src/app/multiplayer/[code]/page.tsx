@@ -1,12 +1,13 @@
 "use client";
 
-import GameBoard from "@/app/components/GameBoard/GameBoard";
+import GameBoard from "@/app/multiplayer/[code]/components/GameBoard/GameBoard";
 import LoadingScreen from "@/app/components/LoadingScreen";
 import Head from "next/head";
 import { ChangeEvent, useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import { PLAYERS_BODY } from "@/../socket-types"
 import { PLAYERS } from "@/../socket-messages"
+import { MultiplayerGame } from "../../../../../../socket-types";
 
 type Params = {
   params: {
@@ -20,6 +21,11 @@ export default function Home({ params }: { params: { code: string } }) {
   const [gameBoardRendered, setGameBoardRendered] = useState(false);
   const socketReady = useRef(false);
 
+  // Game Board socket.io states
+  const [participants, setParticipants] = useState<MultiplayerGame>({});
+
+  // We don't want this useEffect to run on name entrance page because it causes input handler to not run and input
+  // to not be registered. Thus we set enterGame as the dependency
   useEffect(() => {
     if (!socketReady.current) {
       let socket = io(`http://${process.env.NEXT_PUBLIC_SITE_URL}`, {
@@ -37,12 +43,14 @@ export default function Home({ params }: { params: { code: string } }) {
       });
 
       socket.on(PLAYERS, (body: string) => {
-          let msg : PLAYERS_BODY = JSON.parse(body);
+          const msg : PLAYERS_BODY = JSON.parse(body);
+          setParticipants(msg);
+          console.log(msg);
       })
 
       socketReady.current = true;
     }
-  }, []);
+  }, [enterGame]);
 
   function rendered() {
     setGameBoardRendered(true);
@@ -53,14 +61,12 @@ export default function Home({ params }: { params: { code: string } }) {
   }
 
   async function handleEnterGame(): Promise<void> {
-    if (name.length > 0 && name.length < 15) {
       await fetch("/api/multiplayer/join", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: params.code, name }),
       });
       setEnterGame(true);
-    }
   }
 
   return (
@@ -74,7 +80,7 @@ export default function Home({ params }: { params: { code: string } }) {
       {enterGame ? (
         <main className="bg-black">
           <LoadingScreen display={!gameBoardRendered} />
-          <GameBoard rendered={rendered} ready={gameBoardRendered} />
+          <GameBoard rendered={rendered} ready={gameBoardRendered} participants={participants} />
         </main>
       ) : (
         <main className="min-h-screen bg-night">
@@ -95,6 +101,7 @@ export default function Home({ params }: { params: { code: string } }) {
                     className="bg-white outline outline-1 outline-grey h-fit text-grey rounded-md px-3 py-4 my-1"
                     style={{ minWidth: 0 }}
                   />
+                  
                 </form>
               </div>
               <div className="flex text-center items-center justify-center">
