@@ -16,7 +16,7 @@ function checkActivePath(path: string): boolean {
 
 export default function Navbar() {
   return (
-    <nav className="flex justify-between items-center bg-black text-white p-4 font-mono">
+    <nav className="z-50 flex relative justify-between items-center bg-black text-white p-4 font-mono">
       <div className="flex-shrink mx-5 flex space-x-10">
         <Link className="hover:text-blue" href="/">
           <span

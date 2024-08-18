@@ -72,8 +72,6 @@ app.prepare().then(() => {
         const code = body.code;
         const name = body.name;
 
-        console.log("name: " + name)
-
         if (!multiplayerData.games.hasOwnProperty(code)) {
           res.status(401).send(`Invalid game code provided: ${code}`);
           return;

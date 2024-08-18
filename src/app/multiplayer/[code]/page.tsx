@@ -23,6 +23,7 @@ export default function Home({ params }: { params: { code: string } }) {
 
   // Game Board socket.io states
   const [participants, setParticipants] = useState<MultiplayerGame>({});
+  const [openStartModal, setStartModal] = useState(true);
 
   // We don't want this useEffect to run on name entrance page because it causes input handler to not run and input
   // to not be registered. Thus we set enterGame as the dependency
@@ -80,7 +81,7 @@ export default function Home({ params }: { params: { code: string } }) {
       {enterGame ? (
         <main className="bg-black">
           <LoadingScreen display={!gameBoardRendered} />
-          <GameBoard rendered={rendered} ready={gameBoardRendered} participants={participants} />
+          <GameBoard rendered={rendered} ready={gameBoardRendered} participants={participants} openStartModal={openStartModal} />
         </main>
       ) : (
         <main className="min-h-screen bg-night">

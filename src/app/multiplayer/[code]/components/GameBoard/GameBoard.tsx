@@ -19,6 +19,7 @@ type Props = {
   rendered: () => void;
   ready: boolean;
   participants: MultiplayerGame;
+  openStartModal: boolean;
 };
 
 export const MAX_TILE_COUNT = 5;
@@ -28,7 +29,7 @@ function isNonNegativeInteger(value: string): boolean {
   return /^\d+$/.test(value);
 }
 
-export default function GameBoard({ rendered, ready, participants }: Props) {
+export default function GameBoard({ rendered, ready, participants, openStartModal }: Props) {
   const [guessInfo, setGuessInfo] = useState<[Guess, TileCount][]>([]);
   const [country, setCountry] = useState("null");
   const [facts, setFacts] = useState<DailyFact | null>(null);
@@ -148,7 +149,7 @@ export default function GameBoard({ rendered, ready, participants }: Props) {
 
   return (
     <>
-      <div className="z-50">
+      <div className="z-40">
         <Modal
           gameOver={gameOver}
           clientAnswer={
@@ -159,11 +160,12 @@ export default function GameBoard({ rendered, ready, participants }: Props) {
             guessInfo.length > 0 ? getBestTileCount() : 0
           }
           guessInfo={guessInfo}
+          openStartModal={openStartModal}
         />
         <div className="z-0">
+
+          
           <div className="bg-night flex flex-col items-center justify-center md:justify-normal md:items-start md:flex-row font-mono">
-
-
             {ready && (
               <div className="" style={{ width: "27%" }}>
                 <div className="bg-night mx-5 my-10 h-fit rounded-lg">
@@ -269,7 +271,6 @@ export default function GameBoard({ rendered, ready, participants }: Props) {
                 </div>
               </div>
             )}
-
 
           </div>
         </div>

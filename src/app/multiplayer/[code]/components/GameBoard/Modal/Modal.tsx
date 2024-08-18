@@ -8,6 +8,7 @@ type Props = {
   clientAnswer: Guess;
   answerTileCount: TileCount;
   guessInfo: [Guess, TileCount][];
+  openStartModal: boolean;
 };
 
 export default function Modal({
@@ -16,6 +17,7 @@ export default function Modal({
   clientAnswer,
   answerTileCount,
   guessInfo,
+  openStartModal,
 }: Props) {
   const [openModal, setModal] = useState(false);
 
@@ -58,11 +60,11 @@ export default function Modal({
       {openModal && (
         <>
           <div
-            className="fixed inset-0 bg-gray-700 bg-opacity-50 z-40"
+            className="fixed inset-0 bg-gray-700 bg-opacity-50 z-30"
             onClick={closeModal}
           ></div>
 
-          <div className="fixed inset-0 flex px-4 z-50 items-center justify-center font-mono text-center">
+          <div className="fixed inset-0 flex px-4 z-30 items-center justify-center font-mono text-center">
             <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
               <div className="flex p-2 font-mono">
                 <button
@@ -72,7 +74,11 @@ export default function Modal({
                   X
                 </button>
                 <div className="flex flex-col p-4">
-                  <h2 className="text-lg font-semibold">{answerTileCount === MAX_TILE_COUNT ? "Winner!" : "Try Again Tomorrow!"}</h2>
+                  <h2 className="text-lg font-semibold">
+                    {answerTileCount === MAX_TILE_COUNT
+                      ? "Winner!"
+                      : "Try Again Tomorrow!"}
+                  </h2>
                   <p className="mt-2 text-gray-600">
                     Your Answer:{" "}
                     {clientAnswer
@@ -128,6 +134,26 @@ export default function Modal({
                       <b>Copy Results</b>
                     </button>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+      {openStartModal && (
+        <>
+          <div className="fixed inset-0 bg-gray-700 bg-opacity-50 z-30"></div>
+          <div className="z-30 flex px-4 items-center justify-center inset-0 absolute font-mono text-center">
+            <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
+              <div className="flex flex-col p-2 font-mono">
+                <h2 className="text-lg font-semibold">Get Ready!</h2>
+                <p className="mt-2 text-gray-600">
+                  Click start once everyone has joined.
+                </p>
+                <div className="mt-2 text-blue">
+                  <button className="bg-blue hover:shadow-lg shadow-blue text-white rounded-md w-32 h-8 mt-3 px-2 text-sm">
+                    <b>Start</b>
+                  </button>
                 </div>
               </div>
             </div>
