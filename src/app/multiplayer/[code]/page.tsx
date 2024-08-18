@@ -49,15 +49,11 @@ export default function Home({ params }: { params: { code: string } }) {
   }
 
   function handleNameInput(e: ChangeEvent<HTMLInputElement>): void {
-    if (e.target.value.length <= 20) {
       setName(e.target.value);
-    }
   }
 
   async function handleEnterGame(): Promise<void> {
-    console.log("HI")
-    if (name.length > 0) {
-      console.log("HI2")
+    if (name.length > 0 && name.length < 15) {
       await fetch("/api/multiplayer/join", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
