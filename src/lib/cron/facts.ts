@@ -146,8 +146,9 @@ export default async function updateDaily(): Promise<number> {
     },
   };
 
+
   let updateCode = 200;
-  fetch(`http://${process.env.SITE_URL}/api/data/daily`, {
+  fetch(`http://${process.env.NEXT_PUBLIC_SITE_URL}/api/data/daily`, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -160,7 +161,7 @@ export default async function updateDaily(): Promise<number> {
       } else {
         updateCode = res.status;
         console.log(
-          `Unable to update daily information: ${JSON.stringify(res)}`
+          `Unable to update daily information: ${JSON.stringify(res)}, code: ${updateCode}`
         );
       }
     })

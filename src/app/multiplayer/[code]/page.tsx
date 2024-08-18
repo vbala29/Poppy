@@ -3,7 +3,10 @@
 import GameBoard from "@/app/components/GameBoard/GameBoard";
 import LoadingScreen from "@/app/components/LoadingScreen";
 import Head from "next/head";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState, useEffect, useRef } from "react";
+import { io } from "socket.io-client";
+import { PLAYERS_BODY } from "@/../socket-types"
+import { PLAYERS } from "@/../socket-messages"
 
 type Params = {
   params: {
@@ -11,15 +14,35 @@ type Params = {
   };
 };
 
-export default function Home({
-  params,
-}: {
-  params: { code: string };
-}) {
-
+export default function Home({ params }: { params: { code: string } }) {
   const [name, setName] = useState("");
   const [enterGame, setEnterGame] = useState(false);
   const [gameBoardRendered, setGameBoardRendered] = useState(false);
+  const socketReady = useRef(false);
+
+  useEffect(() => {
+    if (!socketReady.current) {
+      let socket = io(`http://${process.env.NEXT_PUBLIC_SITE_URL}`, {
+        query: {
+          code: params.code // Used for socket.io rooms
+        },
+      });
+
+      socket.on("connect", () => {
+        console.log(`Client-side connection to Socket: ${socket.id}`);
+      });
+      
+      socket.on("disconnect", () => {
+        console.log(`Client-side disconnection from Socket`);
+      });
+
+      socket.on(PLAYERS, (body: string) => {
+          let msg : PLAYERS_BODY = JSON.parse(body);
+      })
+
+      socketReady.current = true;
+    }
+  }, []);
 
   function rendered() {
     setGameBoardRendered(true);
@@ -32,13 +55,15 @@ export default function Home({
   }
 
   async function handleEnterGame(): Promise<void> {
-    if (e.target.value.length > 0) {
-      setEnterGame(true);
+    console.log("HI")
+    if (name.length > 0) {
+      console.log("HI2")
       await fetch("/api/multiplayer/join", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: params.code, name }),
       });
+      setEnterGame(true);
     }
   }
 

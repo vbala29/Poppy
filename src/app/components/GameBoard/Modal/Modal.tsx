@@ -84,7 +84,7 @@ export default function Modal({
                       .toString()
                       .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                   </p>
-                  <p className="mt-4 text-blue">
+                  <div className="mt-4 text-blue">
                     <b> Result</b>
                     <div className="flex text-sm *:items-center justify-center m-2">
                       <div className="mr-1">
@@ -127,7 +127,7 @@ export default function Modal({
                     >
                       <b>Copy Results</b>
                     </button>
-                  </p>
+                  </div>
                 </div>
               </div>
             </div>
