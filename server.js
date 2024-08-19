@@ -67,7 +67,7 @@ app.prepare().then(() => {
 
       setTimeout(() => {
         io.to(code).emit(ROUND_START, "");
-        console.log("HI3");
+        console.log("Sent start round request");
       }, ROUND_DELAY)
     })
   });

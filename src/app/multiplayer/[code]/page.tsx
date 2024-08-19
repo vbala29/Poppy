@@ -5,9 +5,19 @@ import LoadingScreen from "@/app/components/LoadingScreen";
 import Head from "next/head";
 import { ChangeEvent, useState, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
-import { DefaultEventsMap } from "@socket.io/component-emitter"
-import { PLAYERS_BODY, START_REQUEST_BODY } from "@/../socket-types"
-import { PLAYERS, START_REQUEST } from "@/../socket-messages"
+import { DefaultEventsMap } from "@socket.io/component-emitter";
+import {
+  PLAYERS_BODY,
+  ROUND_INFO_BODY,
+  START_REQUEST_BODY,
+} from "@/../socket-types";
+import {
+  PLAYERS,
+  ROUND_INFO,
+  ROUND_START,
+  START,
+  START_REQUEST,
+} from "@/../socket-messages";
 import { MultiplayerGame } from "../../../../../../socket-types";
 
 type Params = {
@@ -24,6 +34,20 @@ export default function Home({ params }: { params: { code: string } }) {
   // Game Board socket.io states
   const [participants, setParticipants] = useState<MultiplayerGame>({});
   const [openStartModal, setStartModal] = useState(true);
+  const [openRoundStartModal, setRoundStartModal] = useState(true);
+  const [roundNumber, setRoundNumber] = useState(1);
+  const [countryInfo, setCountryInfo] = useState({
+    country: "Loading",
+    population: 0,
+    lat: 0,
+    lon: 0,
+    facts: {
+      gdp: 0,
+      area: 0,
+      lifeExpectancy: 0,
+    },
+  });
+
   let socket = useRef<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
 
   // We don't want this useEffect to run on name entrance page because it causes input handler to not run and input
@@ -32,27 +56,44 @@ export default function Home({ params }: { params: { code: string } }) {
     if (socket.current == null) {
       socket.current = io(`http://${process.env.NEXT_PUBLIC_SITE_URL}`, {
         query: {
-          code: params.code // Used for socket.io rooms
+          code: params.code, // Used for socket.io rooms
         },
       });
 
       socket.current.on("connect", () => {
         console.log(`Client-side connection to Socket: ${socket.current.id}`);
       });
-      
+
       socket.current.on("disconnect", () => {
         console.log(`Client-side disconnection from Socket`);
       });
 
       socket.current.on(PLAYERS, (msg: PLAYERS_BODY) => {
-          setParticipants(msg);
+        setParticipants(msg);
+      });
+
+      socket.current.on(START, () => {
+        setStartModal(false);
+        setRoundNumber(1);
+      });
+
+      socket.current.on(
+        ROUND_INFO,
+        ({ countryInfo, roundNumber }: ROUND_INFO_BODY) => {
+          setCountryInfo(countryInfo);
+          setRoundNumber(roundNumber);
+        }
+      );
+
+      socket.current.on(ROUND_START, () => {
+        setRoundStartModal(false);
       })
     }
   }, []);
 
   useEffect(() => {
     if (!openStartModal && socket.current !== null) {
-      const body : START_REQUEST_BODY = params.code;
+      const body: START_REQUEST_BODY = params.code;
       socket.current.emit(START_REQUEST, body);
     }
   }, [openStartModal]);
@@ -62,16 +103,16 @@ export default function Home({ params }: { params: { code: string } }) {
   }
 
   function handleNameInput(e: ChangeEvent<HTMLInputElement>): void {
-      setName(e.target.value);
+    setName(e.target.value);
   }
 
   async function handleEnterGame(): Promise<void> {
-      await fetch("/api/multiplayer/join", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: params.code, name }),
-      });
-      setEnterGame(true);
+    await fetch("/api/multiplayer/join", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: params.code, name }),
+    });
+    setEnterGame(true);
   }
 
   return (
@@ -85,8 +126,16 @@ export default function Home({ params }: { params: { code: string } }) {
       {enterGame ? (
         <main className="bg-black">
           <LoadingScreen display={!gameBoardRendered} />
-          <GameBoard rendered={rendered} ready={gameBoardRendered} participants={participants} 
-          openStartModal={openStartModal} setStartModal={setStartModal}/>
+          <GameBoard
+            rendered={rendered}
+            ready={gameBoardRendered}
+            participants={participants}
+            openStartModal={openStartModal}
+            setStartModal={setStartModal}
+            openRoundStartModal={openRoundStartModal}
+            roundNumber={roundNumber}
+            countryInfo={countryInfo}
+          />
         </main>
       ) : (
         <main className="min-h-screen bg-night">
@@ -107,7 +156,6 @@ export default function Home({ params }: { params: { code: string } }) {
                     className="bg-white outline outline-1 outline-grey h-fit text-grey rounded-md px-3 py-4 my-1"
                     style={{ minWidth: 0 }}
                   />
-                  
                 </form>
               </div>
               <div className="flex text-center items-center justify-center">

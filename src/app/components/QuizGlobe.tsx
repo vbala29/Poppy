@@ -71,9 +71,7 @@ export default function QuizGlobe({
       altitude: 2.5,
     }, spinTime);
 
-    // globeEl.current.controls().autoRotate = true;
-    // globeEl.current.controls().autoRotateSpeed = 1;
-  }, [globeReady]);
+  }, [globeReady, endCoordinates]);
 
   if (isLoading) return <div>Loading...</div>;
   if (!data) return <div>Failed To Load Globe Data</div>;
@@ -102,7 +100,7 @@ export default function QuizGlobe({
       onGlobeReady={() => {
         rendered();
         setGlobeReady(true);
-      }}
+      }} 
       width={globeWidth}
       height={globeHeight}
     />

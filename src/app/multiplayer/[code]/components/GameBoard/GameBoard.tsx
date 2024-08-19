@@ -6,7 +6,7 @@ import { FaPlay, FaMoneyCheckDollar } from "react-icons/fa6";
 import { RiLandscapeLine } from "react-icons/ri";
 import { GiLifeBar } from "react-icons/gi";
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
-import { DailyFact } from "@/lib/redis";
+import { DailyFact, DailyInfo } from "@/lib/redis";
 import { Coordinate } from "@/lib/cron/facts";
 import Modal from "@/app/multiplayer/[code]/components/GameBoard/Modal/Modal";
 import { GUESSES_ALLOWED } from "@/app/multiplayer/[code]/components/GameBoard/GuessBoard/GuessBoard";
@@ -24,6 +24,9 @@ type Props = {
   participants: MultiplayerGame;
   openStartModal: boolean;
   setStartModal: (arg0: boolean) => void;
+  openRoundStartModal: boolean;
+  roundNumber: number;
+  countryInfo: DailyInfo;
 };
 
 export const MAX_TILE_COUNT = 5;
@@ -39,6 +42,9 @@ export default function GameBoard({
   participants,
   openStartModal,
   setStartModal,
+  openRoundStartModal,
+  roundNumber,
+  countryInfo,
 }: Props) {
   const [guessInfo, setGuessInfo] = useState<[Guess, TileCount][]>([]);
   const [country, setCountry] = useState("null");
@@ -53,15 +59,11 @@ export default function GameBoard({
 
   // Route to request today's country
   useEffect(() => {
-    fetch("/api/data/daily")
-      .then((res) => res.json())
-      .then((data) => {
-        setCountry(data.country);
-        setPopulation(data.population);
-        setFacts(data.facts);
-        setCountryCoordinates({ lat: data.lat, lon: data.lon });
-      });
-  }, []);
+    setCountry(countryInfo.country);
+    setPopulation(countryInfo.population);
+    setFacts(countryInfo.facts);
+    setCountryCoordinates({ lat: countryInfo.lat, lon: countryInfo.lon });
+  }, [countryInfo]);
 
   useEffect(() => {
     if (guessInfo.length >= GUESSES_ALLOWED) {
@@ -168,6 +170,8 @@ export default function GameBoard({
           guessInfo={guessInfo}
           openStartModal={openStartModal}
           setStartModal={setStartModal}
+          openRoundStartModal={openRoundStartModal}
+          roundNumber={roundNumber}
         />
         <div className="z-0">
           <div className="bg-night flex flex-col items-center justify-center md:justify-normal md:items-start md:flex-row font-mono">
