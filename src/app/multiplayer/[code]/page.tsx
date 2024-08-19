@@ -4,9 +4,10 @@ import GameBoard from "@/app/multiplayer/[code]/components/GameBoard/GameBoard";
 import LoadingScreen from "@/app/components/LoadingScreen";
 import Head from "next/head";
 import { ChangeEvent, useState, useEffect, useRef } from "react";
-import { io } from "socket.io-client";
-import { PLAYERS_BODY } from "@/../socket-types"
-import { PLAYERS } from "@/../socket-messages"
+import { io, Socket } from "socket.io-client";
+import { DefaultEventsMap } from "@socket.io/component-emitter"
+import { PLAYERS_BODY, START_REQUEST_BODY } from "@/../socket-types"
+import { PLAYERS, START_REQUEST } from "@/../socket-messages"
 import { MultiplayerGame } from "../../../../../../socket-types";
 
 type Params = {
@@ -19,39 +20,42 @@ export default function Home({ params }: { params: { code: string } }) {
   const [name, setName] = useState("");
   const [enterGame, setEnterGame] = useState(false);
   const [gameBoardRendered, setGameBoardRendered] = useState(false);
-  const socketReady = useRef(false);
 
   // Game Board socket.io states
   const [participants, setParticipants] = useState<MultiplayerGame>({});
   const [openStartModal, setStartModal] = useState(true);
+  let socket = useRef<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
 
   // We don't want this useEffect to run on name entrance page because it causes input handler to not run and input
   // to not be registered. Thus we set enterGame as the dependency
   useEffect(() => {
-    if (!socketReady.current) {
-      let socket = io(`http://${process.env.NEXT_PUBLIC_SITE_URL}`, {
+    if (socket.current == null) {
+      socket.current = io(`http://${process.env.NEXT_PUBLIC_SITE_URL}`, {
         query: {
           code: params.code // Used for socket.io rooms
         },
       });
 
-      socket.on("connect", () => {
-        console.log(`Client-side connection to Socket: ${socket.id}`);
+      socket.current.on("connect", () => {
+        console.log(`Client-side connection to Socket: ${socket.current.id}`);
       });
       
-      socket.on("disconnect", () => {
+      socket.current.on("disconnect", () => {
         console.log(`Client-side disconnection from Socket`);
       });
 
-      socket.on(PLAYERS, (body: string) => {
-          const msg : PLAYERS_BODY = JSON.parse(body);
+      socket.current.on(PLAYERS, (msg: PLAYERS_BODY) => {
           setParticipants(msg);
-          console.log(msg);
       })
-
-      socketReady.current = true;
     }
-  }, [enterGame]);
+  }, []);
+
+  useEffect(() => {
+    if (!openStartModal && socket.current !== null) {
+      const body : START_REQUEST_BODY = params.code;
+      socket.current.emit(START_REQUEST, body);
+    }
+  }, [openStartModal]);
 
   function rendered() {
     setGameBoardRendered(true);
@@ -81,7 +85,8 @@ export default function Home({ params }: { params: { code: string } }) {
       {enterGame ? (
         <main className="bg-black">
           <LoadingScreen display={!gameBoardRendered} />
-          <GameBoard rendered={rendered} ready={gameBoardRendered} participants={participants} openStartModal={openStartModal} />
+          <GameBoard rendered={rendered} ready={gameBoardRendered} participants={participants} 
+          openStartModal={openStartModal} setStartModal={setStartModal}/>
         </main>
       ) : (
         <main className="min-h-screen bg-night">

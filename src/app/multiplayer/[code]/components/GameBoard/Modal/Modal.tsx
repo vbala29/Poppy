@@ -9,6 +9,7 @@ type Props = {
   answerTileCount: TileCount;
   guessInfo: [Guess, TileCount][];
   openStartModal: boolean;
+  setStartModal: (arg0: boolean) => void;
 };
 
 export default function Modal({
@@ -18,6 +19,7 @@ export default function Modal({
   answerTileCount,
   guessInfo,
   openStartModal,
+  setStartModal
 }: Props) {
   const [openModal, setModal] = useState(false);
 
@@ -151,7 +153,8 @@ export default function Modal({
                   Click start once everyone has joined.
                 </p>
                 <div className="mt-2 text-blue">
-                  <button className="bg-blue hover:shadow-lg shadow-blue text-white rounded-md w-32 h-8 mt-3 px-2 text-sm">
+                  <button className="bg-blue hover:shadow-lg shadow-blue text-white rounded-md w-32 h-8 mt-3 px-2 text-sm"
+                  onClick={() => setStartModal(false)}>
                     <b>Start</b>
                   </button>
                 </div>

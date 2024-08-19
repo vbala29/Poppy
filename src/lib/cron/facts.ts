@@ -19,25 +19,32 @@ type GDPData = {
 };
 
 export type Coordinate = {
-    lat: number;
-    lon: number;
-  };
+  lat: number;
+  lon: number;
+};
 
 export async function getCountryCoordinates(
-    country: string
-  ): Promise<Coordinate> {
-    const res = await fetch(
-      `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(country)}&key=${process.env.OPEN_CAGE_API_KEY}`
-    ).then((res) => res.json()).catch(err => console.log(err));
+  country: string
+): Promise<Coordinate> {
+  const res = await fetch(
+    `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
+      country
+    )}&key=${process.env.OPEN_CAGE_API_KEY}`
+  )
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 
-    if (res.results[0].geometry) {
-      return { lat: res.results[0].geometry.lat, lon: res.results[0].geometry.lng }
-    } else {
-      console.log(`Unable to retrieve coordinates for ${country}`);
-      return { lat: 0, lon: 0 };
-    }
+  if (res.results[0].geometry) {
+    return {
+      lat: res.results[0].geometry.lat,
+      lon: res.results[0].geometry.lng,
+    };
+  } else {
+    console.log(`Unable to retrieve coordinates for ${country}`);
+    return { lat: 0, lon: 0 };
   }
-  
+}
+
 async function getLifeExpectancies(
   country: string
 ): Promise<LifeExpectancyData> {
@@ -146,7 +153,6 @@ export default async function updateDaily(): Promise<number> {
     },
   };
 
-
   let updateCode = 200;
   fetch(`http://${process.env.NEXT_PUBLIC_SITE_URL}/api/data/daily`, {
     headers: {
@@ -161,14 +167,59 @@ export default async function updateDaily(): Promise<number> {
       } else {
         updateCode = res.status;
         console.log(
-          `Unable to update daily information: ${JSON.stringify(res)}, code: ${updateCode}`
+          `Unable to update daily information: ${JSON.stringify(
+            res
+          )}, code: ${updateCode}`
         );
       }
     })
     .catch((err) => {
       updateCode = 500;
-      console.log(`Unable to update daily information error ocurred: ${err.toString()}`);
+      console.log(
+        `Unable to update daily information error ocurred: ${err.toString()}`
+      );
     });
 
   return updateCode;
+}
+
+export async function chooseMultiplayerCountry(
+  previouslySelected: string[]
+): Promise<DailyInfo> {
+  let geojson = await fs
+    .readFile(
+      process.cwd() + "/datasets/ne_110m_admin_0_countries.geojson",
+      "utf8"
+    )
+    .then((f) => JSON.parse(f));
+
+  let countryName : string = "";
+  do {
+    const randomCountryIndex = Math.floor(Math.random() * 177);
+    countryName = geojson.features[randomCountryIndex].properties.NAME;
+  } while(previouslySelected.includes(countryName));
+
+  let lifeExpectancyData: LifeExpectancyData = await getLifeExpectancies(
+    countryName
+  );
+  let gdpData: GDPData = await getGDP(countryName);
+  let restCountriesData: RestCountriesResponse = await restCountries(
+    countryName
+  );
+
+  let coordinateData: Coordinate = await getCountryCoordinates(countryName);
+
+  let dailyInfo: DailyInfo = {
+    country: countryName,
+    population: restCountriesData.population,
+    lat: coordinateData.lat,
+    lon: coordinateData.lon,
+    facts: {
+      area: restCountriesData.area,
+      gdp: gdpData.gdp,
+      lifeExpectancy: lifeExpectancyData.lifeExpectancy,
+    },
+  };
+
+  return dailyInfo;
 }

@@ -10,7 +10,10 @@ import { DailyFact } from "@/lib/redis";
 import { Coordinate } from "@/lib/cron/facts";
 import Modal from "@/app/multiplayer/[code]/components/GameBoard/Modal/Modal";
 import { GUESSES_ALLOWED } from "@/app/multiplayer/[code]/components/GameBoard/GuessBoard/GuessBoard";
-import { MultiplayerGame, MultiplayerUser } from "../../../../../../socket-types";
+import {
+  MultiplayerGame,
+  MultiplayerUser,
+} from "../../../../../../socket-types";
 
 export type TileCount = number;
 export type Guess = number;
@@ -20,6 +23,7 @@ type Props = {
   ready: boolean;
   participants: MultiplayerGame;
   openStartModal: boolean;
+  setStartModal: (arg0: boolean) => void;
 };
 
 export const MAX_TILE_COUNT = 5;
@@ -29,7 +33,13 @@ function isNonNegativeInteger(value: string): boolean {
   return /^\d+$/.test(value);
 }
 
-export default function GameBoard({ rendered, ready, participants, openStartModal }: Props) {
+export default function GameBoard({
+  rendered,
+  ready,
+  participants,
+  openStartModal,
+  setStartModal,
+}: Props) {
   const [guessInfo, setGuessInfo] = useState<[Guess, TileCount][]>([]);
   const [country, setCountry] = useState("null");
   const [facts, setFacts] = useState<DailyFact | null>(null);
@@ -113,7 +123,7 @@ export default function GameBoard({ rendered, ready, participants, openStartModa
     for (let [guess, _] of guessInfo) {
       if (Math.abs(population - guess) < bestGuessDifference) {
         bestGuess = guess;
-        bestGuessDifference = Math.abs(population - guess)
+        bestGuessDifference = Math.abs(population - guess);
       }
     }
 
@@ -141,30 +151,25 @@ export default function GameBoard({ rendered, ready, participants, openStartModa
           <td>{`${user}: `}</td>
           <td>{`${points}`}</td>
         </tr>
-      )
+      );
     }
 
     return output;
-  }
+  };
 
   return (
     <>
       <div className="z-40">
         <Modal
           gameOver={gameOver}
-          clientAnswer={
-            guessInfo.length > 0 ? getBestGuessAnswer() : 0
-          }
+          clientAnswer={guessInfo.length > 0 ? getBestGuessAnswer() : 0}
           actualAnswer={population}
-          answerTileCount={
-            guessInfo.length > 0 ? getBestTileCount() : 0
-          }
+          answerTileCount={guessInfo.length > 0 ? getBestTileCount() : 0}
           guessInfo={guessInfo}
           openStartModal={openStartModal}
+          setStartModal={setStartModal}
         />
         <div className="z-0">
-
-          
           <div className="bg-night flex flex-col items-center justify-center md:justify-normal md:items-start md:flex-row font-mono">
             {ready && (
               <div className="" style={{ width: "27%" }}>
@@ -201,7 +206,10 @@ export default function GameBoard({ rendered, ready, participants, openStartModa
               </div>
             )}
 
-            <div className="flex items-center justify-center" style={{ width: "46%" }}>
+            <div
+              className="flex items-center justify-center"
+              style={{ width: "46%" }}
+            >
               <QuizGlobe
                 shadedCountry={country}
                 endCoordinates={countryCoordinates}
@@ -257,21 +265,19 @@ export default function GameBoard({ rendered, ready, participants, openStartModa
                       </div>
                     </div>
                     <h2 className="text-center mx-3.5 mb-2 items-center justify-center bg-white rounded-md text-black h-fit py-2">
-                          Players
+                      Players
                     </h2>
                     <div className="flex flex-col text-white pt-4 px-4 font-mono">
                       <div className="flex flex-col mb-7">
-                      <table>
-                        {participants_jsx()}
+                        <table>
+                          <tbody>{participants_jsx()}</tbody>
                         </table>
                       </div>
                     </div>
-                    
                   </div>
                 </div>
               </div>
             )}
-
           </div>
         </div>
       </div>
