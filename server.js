@@ -2,7 +2,7 @@ import { createServer } from "http";
 import express from "express";
 import next from "next";
 import { Server } from "socket.io";
-import { START, PLAYERS, START_REQUEST, ROUND_DELAY, ROUND_INFO, ROUND_START } from "./socket-messages.js"
+import { START, PLAYERS, START_REQUEST, ROUND_DELAY, ROUND_INFO, ROUND_START, ROUND_END } from "./socket-messages.js"
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -69,6 +69,10 @@ app.prepare().then(() => {
         io.to(code).emit(ROUND_START, "");
         console.log("Sent start round request");
       }, ROUND_DELAY)
+    })
+
+    socket.on(ROUND_END, () => {
+      console.log("Round ended");
     })
   });
 

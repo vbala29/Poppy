@@ -27,6 +27,8 @@ type Props = {
   openRoundStartModal: boolean;
   roundNumber: number;
   countryInfo: DailyInfo;
+  openRoundEndModal: boolean;
+  timeInRound: number;
 };
 
 export const MAX_TILE_COUNT = 5;
@@ -45,6 +47,8 @@ export default function GameBoard({
   openRoundStartModal,
   roundNumber,
   countryInfo,
+  openRoundEndModal,
+  timeInRound
 }: Props) {
   const [guessInfo, setGuessInfo] = useState<[Guess, TileCount][]>([]);
   const [country, setCountry] = useState("null");
@@ -172,6 +176,7 @@ export default function GameBoard({
           setStartModal={setStartModal}
           openRoundStartModal={openRoundStartModal}
           roundNumber={roundNumber}
+          openRoundEndModal={openRoundEndModal}
         />
         <div className="z-0">
           <div className="bg-night flex flex-col items-center justify-center md:justify-normal md:items-start md:flex-row font-mono">
@@ -268,10 +273,14 @@ export default function GameBoard({
                         </span>
                       </div>
                     </div>
-                    <h2 className="text-center mx-3.5 mb-2 items-center justify-center bg-white rounded-md text-black h-fit py-2">
+                    <h2 className="text-center mx-3.5 items-center justify-center bg-white rounded-md text-black h-fit py-2">
                       Players
                     </h2>
                     <div className="flex flex-col text-white pt-4 px-4 font-mono">
+                      <div className="flex mb-2 space-x-4 items-center font-semibold justify-center text-center">
+                        <div className="w-1/2 bg-blue text-black rounded-md">Round {roundNumber}</div>
+                        <div className="w-1/2 bg-blue text-black rounded-md">{timeInRound}s remain</div>
+                      </div>
                       <div className="flex flex-col mb-7">
                         <table>
                           <tbody>{participants_jsx()}</tbody>

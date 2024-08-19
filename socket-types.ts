@@ -33,10 +33,10 @@ export type RoundInfoData = {
     roundNumber : number
 }
 
-
 /* Message Body Types (See socket-messages for the message titles) */
 export type PLAYERS_BODY = MultiplayerGame;
 export type START_REQUEST_BODY = Code;
 export type START_BODY = EmptyString;
 export type ROUND_INFO_BODY = RoundInfoData;
 export type ROUND_START_BODY = EmptyString;
+export type ROUND_END_BODY = EmptyString;

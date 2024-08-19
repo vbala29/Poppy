@@ -13,6 +13,7 @@ import {
 } from "@/../socket-types";
 import {
   PLAYERS,
+  ROUND_END,
   ROUND_INFO,
   ROUND_START,
   START,
@@ -31,7 +32,7 @@ export default function Home({ params }: { params: { code: string } }) {
   const [enterGame, setEnterGame] = useState(false);
   const [gameBoardRendered, setGameBoardRendered] = useState(false);
 
-  // Game Board socket.io states
+  // Multiplayer related states
   const [participants, setParticipants] = useState<MultiplayerGame>({});
   const [openStartModal, setStartModal] = useState(true);
   const [openRoundStartModal, setRoundStartModal] = useState(true);
@@ -47,6 +48,9 @@ export default function Home({ params }: { params: { code: string } }) {
       lifeExpectancy: 0,
     },
   });
+  const [timeInRound, setTimeInRound] = useState(30);
+  const [openRoundEndModal, setOpenRoundEndModal] = useState(false);
+
 
   let socket = useRef<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
 
@@ -90,6 +94,7 @@ export default function Home({ params }: { params: { code: string } }) {
       })
     }
   }, []);
+  
 
   useEffect(() => {
     if (!openStartModal && socket.current !== null) {
@@ -97,6 +102,26 @@ export default function Home({ params }: { params: { code: string } }) {
       socket.current.emit(START_REQUEST, body);
     }
   }, [openStartModal]);
+
+  const roundTimeSeconds = 30; // 30 Seconds per round
+  useEffect(() => {
+    if (!openRoundStartModal) {
+      setTimeInRound(30);
+      // Round has begun, let's start timer.
+      const timerInterval = setInterval(() => {
+        setTimeInRound((prev) => {
+          if (prev === 0) {
+            clearInterval(timerInterval);
+            setOpenRoundEndModal(true);
+            socket.current.emit(ROUND_END, "");
+            return 0;
+          } else {
+            return prev - 1;
+          }
+        })
+      }, 1000);
+    }
+  }, [openRoundStartModal])
 
   function rendered() {
     setGameBoardRendered(true);
@@ -135,6 +160,8 @@ export default function Home({ params }: { params: { code: string } }) {
             openRoundStartModal={openRoundStartModal}
             roundNumber={roundNumber}
             countryInfo={countryInfo}
+            openRoundEndModal={openRoundEndModal}
+            timeInRound={timeInRound}
           />
         </main>
       ) : (
