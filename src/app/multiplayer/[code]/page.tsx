@@ -12,6 +12,7 @@ import {
   START_REQUEST_BODY,
 } from "@/../socket-types";
 import {
+  GUESS,
   PLAYERS,
   ROUND_END,
   ROUND_INFO,
@@ -20,6 +21,7 @@ import {
   START_REQUEST,
 } from "@/../socket-messages";
 import { MultiplayerGame } from "../../../../../../socket-types";
+import { Guess, TileCount } from "@/app/components/GameBoard/GameBoard";
 
 type Params = {
   params: {
@@ -50,7 +52,7 @@ export default function Home({ params }: { params: { code: string } }) {
   });
   const [timeInRound, setTimeInRound] = useState(30);
   const [openRoundEndModal, setOpenRoundEndModal] = useState(false);
-
+  const [currentBestGuess, setCurrentBestGuess] = useState<null | [Guess, TileCount]>(null);
 
   let socket = useRef<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
 
@@ -123,6 +125,12 @@ export default function Home({ params }: { params: { code: string } }) {
     }
   }, [openRoundStartModal])
 
+  useEffect(() => {
+    if (currentBestGuess !== null) {
+      socket.current.emit(GUESS, [name, currentBestGuess]);
+    }
+  }, [currentBestGuess])
+
   function rendered() {
     setGameBoardRendered(true);
   }
@@ -162,6 +170,7 @@ export default function Home({ params }: { params: { code: string } }) {
             countryInfo={countryInfo}
             openRoundEndModal={openRoundEndModal}
             timeInRound={timeInRound}
+            setCurrentBestGuess={setCurrentBestGuess}
           />
         </main>
       ) : (

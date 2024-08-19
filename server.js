@@ -2,7 +2,7 @@ import { createServer } from "http";
 import express from "express";
 import next from "next";
 import { Server } from "socket.io";
-import { START, PLAYERS, START_REQUEST, ROUND_DELAY, ROUND_INFO, ROUND_START, ROUND_END } from "./socket-messages.js"
+import { START, PLAYERS, START_REQUEST, ROUND_DELAY, ROUND_INFO, ROUND_START, ROUND_END, GUESS } from "./socket-messages.js"
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -50,7 +50,12 @@ app.prepare().then(() => {
     });
 
     socket.on(START_REQUEST, async (code) => {
-      io.to(code).emit(START, "");
+      if (multiplayerBookkeeping[code].started) {
+        return;
+      }
+      multiplayerBookkeeping[code].started = true;
+
+      io.to(code).emit(START, ""); // Tell the other nodes that game has started
 
       let roundInfoBody = await fetch(`http://${process.env.NEXT_PUBLIC_SITE_URL}/api/data/multiplayer`, {
         method: "POST",
@@ -69,11 +74,17 @@ app.prepare().then(() => {
         io.to(code).emit(ROUND_START, "");
         console.log("Sent start round request");
       }, ROUND_DELAY)
-    })
+    });
 
     socket.on(ROUND_END, () => {
       console.log("Round ended");
-    })
+    });
+
+    socket.on(GUESS, ([name, guessInfo]) => {
+      multiplayerData[code][name].guessInfo = guessInfo;
+      console.log("recorded best guess for code: " + code + ", name: " + name + ", guess: " + guessInfo)
+    });
+
   });
 
   server.post(`/api/multiplayer/create`, (req, res) => {
@@ -81,7 +92,8 @@ app.prepare().then(() => {
     multiplayerData[code] = {};
     multiplayerBookkeeping[code] = {
       previouslySelected: [],
-      roundNumber: 1
+      roundNumber: 1,
+      started: false
     };
     console.log("Created game with code: " + code);
     res.status(201).json({ code }).end();

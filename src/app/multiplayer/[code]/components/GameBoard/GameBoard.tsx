@@ -29,6 +29,7 @@ type Props = {
   countryInfo: DailyInfo;
   openRoundEndModal: boolean;
   timeInRound: number;
+  setCurrentBestGuess: (arg0: [Guess, TileCount]) => void;
 };
 
 export const MAX_TILE_COUNT = 5;
@@ -48,7 +49,8 @@ export default function GameBoard({
   roundNumber,
   countryInfo,
   openRoundEndModal,
-  timeInRound
+  timeInRound,
+  setCurrentBestGuess
 }: Props) {
   const [guessInfo, setGuessInfo] = useState<[Guess, TileCount][]>([]);
   const [country, setCountry] = useState("null");
@@ -74,6 +76,10 @@ export default function GameBoard({
       setGameOver(true);
       return;
     }
+
+    let guess: Guess = getBestGuessAnswer();
+    let tileCount: TileCount = calculateTileCount(guess);
+    setCurrentBestGuess([guess, tileCount]);
   }, [guessInfo]);
 
   function handlePopulationInput(e: ChangeEvent<HTMLInputElement>): void {

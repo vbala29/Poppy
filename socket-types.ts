@@ -23,6 +23,7 @@ export type MultiplayerBookkeeping = {
     [games: Code]: {
         previouslySelected: string[];
         roundNumber: number;
+        started: boolean;
     }
 }
 
@@ -40,3 +41,4 @@ export type START_BODY = EmptyString;
 export type ROUND_INFO_BODY = RoundInfoData;
 export type ROUND_START_BODY = EmptyString;
 export type ROUND_END_BODY = EmptyString;
+export type GUESS_BODY = [UserName, Guess];
