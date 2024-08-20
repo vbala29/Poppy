@@ -126,6 +126,7 @@ export default function Home({ params }: { params: { code: string } }) {
 
       socket.current.on(GUESS_UPDATE, (guessInfo: GUESS_UPDATE_BODY) => {
         const [name, _]: GUESS_UPDATE_BODY = guessInfo;
+
         setGuessUpdates(g => [...g, guessInfo]);
         setTimeout(() => {
           let found = false;
@@ -141,7 +142,7 @@ export default function Home({ params }: { params: { code: string } }) {
             return true;
           });
           setGuessUpdates(newGuessUpdate);
-        }, 1000)
+        }, 2000)
       });
     }
   }, []);

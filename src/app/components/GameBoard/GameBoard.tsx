@@ -86,7 +86,7 @@ export default function GameBoard({ rendered, ready }: Props) {
     e.preventDefault();
     if (gameOver) return;
 
-    if (guessInfo.length >= GUESSES_ALLOWED) {
+    if (guessInfo.length > GUESSES_ALLOWED) {
       return;
     }
 

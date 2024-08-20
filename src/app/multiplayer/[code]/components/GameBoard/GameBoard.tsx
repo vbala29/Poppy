@@ -97,7 +97,7 @@ export default function GameBoard({
   }, [openRoundStartModal]);
 
   useEffect(() => {
-    if (guessInfo.length >= GUESSES_ALLOWED) {
+    if (guessInfo.length > GUESSES_ALLOWED) {
       return;
     }
 
@@ -133,7 +133,7 @@ export default function GameBoard({
     const MAX_GUESS_VALUE = 1000000000; // 1 billion
     e.preventDefault();
 
-    if (guessInfo.length >= GUESSES_ALLOWED) {
+    if (guessInfo.length > GUESSES_ALLOWED) {
       return;
     }
 
@@ -239,11 +239,11 @@ export default function GameBoard({
                     <div className="my-4 mx-3">
                       <GuessBoard guessInfo={guessInfo} />
                       <div className="flex flex-col items-center justify-center space-y-2">
-                        {guessUpdates.map((v) => {
+                        {guessUpdates.map((v, i) => {
                           const [name, newGuess]: GUESS_UPDATE_BODY = v;
                           return (
-                            <div className="bg-white rounded-md m-2 text-center">
-                              {name} guessed {formatNumber(newGuess)}
+                            <div key={i} className="bg-white rounded-md p-3 text-center text-sm font-mono">
+                              <b className="text-green-500">{name}</b> guessed {formatNumber(newGuess)}
                             </div>
                           );
                         })}
