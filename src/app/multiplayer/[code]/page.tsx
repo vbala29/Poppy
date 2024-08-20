@@ -7,14 +7,18 @@ import { ChangeEvent, useState, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import {
+  GUESS_UPDATE_BODY,
   PLAYERS_BODY,
   PLAYERS_UPDATE_BODY,
   ROUND_INFO_BODY,
   SCORE_INFO_BODY,
   START_REQUEST_BODY,
+  UserName,
 } from "@/../socket-types";
 import {
   GUESS,
+  GUESS_MADE,
+  GUESS_UPDATE,
   PLAYERS,
   PLAYERS_UPDATE,
   ROUND_END,
@@ -61,6 +65,8 @@ export default function Home({ params }: { params: { code: string } }) {
   const [currentBestGuess, setCurrentBestGuess] = useState<null | [Guess, TileCount]>(null);
   const [sortedRoundResults, setSortedRoundResults] = useState<SCORE_INFO_BODY>([]);
   const [openScoreModal, setOpenScoreModal] = useState(false);
+  const [currentGuess, setCurrentGuess] = useState<null | number>(null);
+  const [guessUpdates, setGuessUpdates] = useState<[UserName, Guess][]>([]);
 
   let socket = useRef<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
 
@@ -117,6 +123,26 @@ export default function Home({ params }: { params: { code: string } }) {
         setOpenRoundEndModal(false);
         setOpenScoreModal(true);
       });
+
+      socket.current.on(GUESS_UPDATE, (guessInfo: GUESS_UPDATE_BODY) => {
+        const [name, _]: GUESS_UPDATE_BODY = guessInfo;
+        setGuessUpdates(g => [...g, guessInfo]);
+        setTimeout(() => {
+          let found = false;
+          let newGuessUpdate = guessUpdates.filter((v) => {
+            if (found) return true;
+
+            const [guess_name, _]: GUESS_UPDATE_BODY = v;
+            if (guess_name === name) {
+              found = true;
+              return false;
+            }
+
+            return true;
+          });
+          setGuessUpdates(newGuessUpdate);
+        }, 1000)
+      });
     }
   }, []);
   
@@ -152,6 +178,12 @@ export default function Home({ params }: { params: { code: string } }) {
       socket.current.emit(GUESS, [name, currentBestGuess]);
     }
   }, [currentBestGuess])
+
+  useEffect(() => {
+    if (currentGuess !== null) {
+      socket.current.emit(GUESS_MADE, [name, currentGuess]);
+    }
+  }, [currentGuess])
 
   function rendered() {
     setGameBoardRendered(true);
@@ -193,8 +225,10 @@ export default function Home({ params }: { params: { code: string } }) {
             openRoundEndModal={openRoundEndModal}
             timeInRound={timeInRound}
             setCurrentBestGuess={setCurrentBestGuess}
+            setCurrentGuess={setCurrentGuess}
             openScoreModal={openScoreModal}
             sortedRoundResults={sortedRoundResults}
+            guessUpdates={guessUpdates}
           />
         </main>
       ) : (

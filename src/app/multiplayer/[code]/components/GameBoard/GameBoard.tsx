@@ -11,10 +11,13 @@ import { Coordinate } from "@/lib/cron/facts";
 import Modal from "@/app/multiplayer/[code]/components/GameBoard/Modal/Modal";
 import { GUESSES_ALLOWED } from "@/app/multiplayer/[code]/components/GameBoard/GuessBoard/GuessBoard";
 import {
+  GUESS_UPDATE_BODY,
   MultiplayerGame,
   MultiplayerUser,
   SCORE_INFO_BODY,
+  UserName,
 } from "../../../../../../socket-types";
+import formatNumber from "@/lib/format";
 
 export type TileCount = number;
 export type Guess = number;
@@ -33,6 +36,8 @@ type Props = {
   setCurrentBestGuess: (arg0: [Guess, TileCount]) => void;
   openScoreModal: boolean;
   sortedRoundResults: SCORE_INFO_BODY;
+  setCurrentGuess: (arg0: number) => void;
+  guessUpdates: [UserName, Guess][];
 };
 
 export const MAX_TILE_COUNT = 5;
@@ -55,7 +60,9 @@ export default function GameBoard({
   timeInRound,
   setCurrentBestGuess,
   openScoreModal,
-  sortedRoundResults
+  sortedRoundResults,
+  setCurrentGuess,
+  guessUpdates,
 }: Props) {
   const defaultCoordinate = {
     lat: 0,
@@ -66,8 +73,8 @@ export default function GameBoard({
   const [facts, setFacts] = useState<DailyFact | null>(null);
   const [population, setPopulation] = useState(0);
   const [guessedPopulation, setGuessedPopulation] = useState("");
-  const [countryCoordinates, setCountryCoordinates] = useState<Coordinate>(defaultCoordinate);
-  const [gameOver, setGameOver] = useState(false);
+  const [countryCoordinates, setCountryCoordinates] =
+    useState<Coordinate>(defaultCoordinate);
 
   // Route to request today's country
   useEffect(() => {
@@ -80,18 +87,17 @@ export default function GameBoard({
   useEffect(() => {
     if (openRoundStartModal) {
       // Clear game board on new round start.
-      setGuessInfo([]); 
+      setGuessInfo([]);
       setCountry("");
       setFacts(null);
       setPopulation(0);
       setGuessedPopulation("");
       setCountryCoordinates(defaultCoordinate);
     }
-  }, [openRoundStartModal])
+  }, [openRoundStartModal]);
 
   useEffect(() => {
     if (guessInfo.length >= GUESSES_ALLOWED) {
-      setGameOver(true);
       return;
     }
 
@@ -126,7 +132,6 @@ export default function GameBoard({
   function submitGuess(e: FormEvent<HTMLFormElement>): void {
     const MAX_GUESS_VALUE = 1000000000; // 1 billion
     e.preventDefault();
-    if (gameOver) return;
 
     if (guessInfo.length >= GUESSES_ALLOWED) {
       return;
@@ -138,11 +143,8 @@ export default function GameBoard({
       let tileCount = calculateTileCount(guessNum);
 
       if (guessNum <= MAX_GUESS_VALUE) {
+        setCurrentGuess(guessNum);
         setGuessInfo((g) => [...g, [guessNum, tileCount]]);
-      }
-
-      if (tileCount === MAX_TILE_COUNT) {
-        setGameOver(true);
       }
     }
   }
@@ -191,7 +193,6 @@ export default function GameBoard({
     <>
       <div className="z-40">
         <Modal
-          gameOver={gameOver}
           clientAnswer={guessInfo.length > 0 ? getBestGuessAnswer() : 0}
           actualAnswer={population}
           answerTileCount={guessInfo.length > 0 ? getBestTileCount() : 0}
@@ -236,7 +237,17 @@ export default function GameBoard({
                       </button>
                     </form>
                     <div className="my-4 mx-3">
-                      <GuessBoard guessInfo={guessInfo} gameOver={gameOver} />
+                      <GuessBoard guessInfo={guessInfo} />
+                      <div className="flex flex-col items-center justify-center space-y-2">
+                        {guessUpdates.map((v) => {
+                          const [name, newGuess]: GUESS_UPDATE_BODY = v;
+                          return (
+                            <div className="bg-white rounded-md m-2 text-center">
+                              {name} guessed {formatNumber(newGuess)}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -271,9 +282,7 @@ export default function GameBoard({
                           GDP
                           <br />$
                           {facts !== null
-                            ? (facts.gdp * 1000000)
-                                .toString()
-                                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            ? formatNumber(facts.gdp * 1000000)
                             : "N/A"}
                         </span>
                       </div>
@@ -284,9 +293,7 @@ export default function GameBoard({
                           Total Area
                           <br />
                           {facts !== null
-                            ? facts.area
-                                .toString()
-                                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            ? formatNumber(facts.area)
                             : "N/A"}{" "}
                           km<sup>2</sup>
                         </span>
@@ -306,8 +313,12 @@ export default function GameBoard({
                     </h2>
                     <div className="flex flex-col text-white pt-4 px-4 font-mono">
                       <div className="flex mb-2 space-x-4 items-center font-semibold justify-center text-center">
-                        <div className="w-1/2 bg-blue text-black rounded-md">Round {roundNumber}</div>
-                        <div className="w-1/2 bg-blue text-black rounded-md">{timeInRound}s remain</div>
+                        <div className="w-1/2 bg-blue text-black rounded-md">
+                          Round {roundNumber}
+                        </div>
+                        <div className="w-1/2 bg-blue text-black rounded-md">
+                          {timeInRound}s remain
+                        </div>
                       </div>
                       <div className="flex flex-col mb-7">
                         <table>

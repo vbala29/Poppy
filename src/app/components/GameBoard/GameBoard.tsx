@@ -10,6 +10,7 @@ import { DailyFact } from "@/lib/redis";
 import { Coordinate } from "@/lib/cron/facts";
 import Modal from "@/app/components/GameBoard/Modal/Modal";
 import { GUESSES_ALLOWED } from "@/app/components/GameBoard/GuessBoard/GuessBoard";
+import formatNumber from "@/lib/format";
 
 export type TileCount = number;
 export type Guess = number;
@@ -206,9 +207,7 @@ export default function GameBoard({ rendered, ready }: Props) {
                           GDP
                           <br />$
                           {facts !== null
-                            ? (facts.gdp * 1000000)
-                                .toString()
-                                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            ? formatNumber(facts.gdp * 1000000)
                             : "N/A"}
                         </span>
                       </div>
@@ -219,9 +218,7 @@ export default function GameBoard({ rendered, ready }: Props) {
                           Total Area
                           <br />
                           {facts !== null
-                            ? facts.area
-                                .toString()
-                                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            ? formatNumber(facts.area)
                             : "N/A"}{" "}
                           km<sup>2</sup>
                         </span>

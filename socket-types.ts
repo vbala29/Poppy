@@ -43,4 +43,6 @@ export type ROUND_END_BODY = EmptyString;
 export type GUESS_BODY = [UserName, Guess];
 export type SCORE_INFO_BODY = [UserName, Score][]; // Sorted by Score in decreasing order.
 export type PLAYERS_UPDATE_BODY = MultiplayerGame;
-export type ROUND_INTERLUDE = EmptyString;
+export type ROUND_INTERLUDE_BODY = EmptyString;
+export type GUESS_MADE_BODY = [UserName, Guess];
+export type GUESS_UPDATE_BODY = GUESS_MADE_BODY;

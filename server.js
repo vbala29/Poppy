@@ -14,6 +14,8 @@ import {
   GUESS,
   PLAYERS_UPDATE,
   ROUND_INTERLUDE,
+  GUESS_MADE,
+  GUESS_UPDATE,
 } from "./socket-messages.js";
 
 const dev = process.env.NODE_ENV !== "production";
@@ -160,6 +162,10 @@ app.prepare().then(() => {
       multiplayerData[code][name].guessInfo = guessInfo;
       // console.log("recorded best guess for code: " + code + ", name: " + name + ", guess: " + guessInfo)
     });
+
+    socket.on(GUESS_MADE, (guess) => {
+      io.to(code).except(socket.id).emit(GUESS_UPDATE, guess); // Don't need to tell a user their own guess so we use except().
+    })
   });
 
   server.post(`/api/multiplayer/create`, (req, res) => {

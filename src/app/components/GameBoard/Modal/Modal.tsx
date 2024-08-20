@@ -1,6 +1,7 @@
 import React, { useState, useEffect, act } from "react";
 import { Guess, MAX_TILE_COUNT, TileCount } from "../GameBoard";
 import styles from "../styles.module.css";
+import formatNumber from "@/lib/format";
 
 type Props = {
   gameOver: boolean;
@@ -75,14 +76,10 @@ export default function Modal({
                   <h2 className="text-lg font-semibold">{answerTileCount === MAX_TILE_COUNT ? "Winner!" : "Try Again Tomorrow!"}</h2>
                   <p className="mt-2 text-gray-600">
                     Your Answer:{" "}
-                    {clientAnswer
-                      .toString()
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    {formatNumber(clientAnswer)}
                     <br />
                     Actual Answer:{" "}
-                    {actualAnswer
-                      .toString()
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    {formatNumber(actualAnswer)}
                   </p>
                   <div className="mt-4 text-blue">
                     <b> Result</b>

@@ -3,12 +3,11 @@ import { Guess as GuessType, TileCount } from "../GameBoard";
 
 type Props = {
   guessInfo: [GuessType, TileCount][];
-  gameOver: boolean
 };
 
 export const GUESSES_ALLOWED = 3;
 
-export default function GuessBoard({ guessInfo, gameOver }: Props) {
+export default function GuessBoard({ guessInfo }: Props) {
   return (
     <>
       {
@@ -17,7 +16,7 @@ export default function GuessBoard({ guessInfo, gameOver }: Props) {
         ))
       }
       {(() => {
-            if (guessInfo.length < GUESSES_ALLOWED && !gameOver) {
+            if (guessInfo.length < GUESSES_ALLOWED) {
                 return (
                     <>
                     <div className="flex flex-col">
@@ -32,7 +31,7 @@ export default function GuessBoard({ guessInfo, gameOver }: Props) {
                     <>
                     <div className="flex flex-col">
                         <div className="flex bg-black text-white items-center justify-center text-center rounded-md h-fit py-1 mt-1 mb-3 mx-1">
-                        Game Over!
+                        No Guesses Remaining
                         </div>
                     </div>
                 </>

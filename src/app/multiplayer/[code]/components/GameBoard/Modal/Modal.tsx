@@ -9,9 +9,9 @@ import {
   SCORE_INFO_BODY,
 } from "../../../../../../../socket-types";
 import { DailyInfo } from "@/lib/redis";
+import formatPopulation from "@/lib/format";
 
 type Props = {
-  gameOver: boolean;
   actualAnswer: Guess;
   clientAnswer: Guess;
   answerTileCount: TileCount;
@@ -28,7 +28,6 @@ type Props = {
 };
 
 export default function Modal({
-  gameOver,
   actualAnswer,
   clientAnswer,
   answerTileCount,
@@ -43,39 +42,6 @@ export default function Modal({
   sortedRoundResults,
   countryInfo,
 }: Props) {
-  const [openModal, setModal] = useState(false);
-
-  const closeModal = () => {
-    setModal(false);
-  };
-
-  useEffect(() => {
-    setModal(gameOver);
-  }, [gameOver]);
-
-  const copyResults = () => {
-    const now = new Date();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    const year = now.getFullYear();
-
-    let guessesOutput = "";
-    for (let [_, tileCount] of guessInfo) {
-      guessesOutput += "🟩".repeat(tileCount);
-      guessesOutput += "⬜️".repeat(MAX_TILE_COUNT - tileCount);
-      guessesOutput += "\n";
-    }
-
-    navigator.clipboard.writeText(
-      `PopQuiz™ (${month}/${day}/${year})\n` +
-        `${
-          answerTileCount === MAX_TILE_COUNT ? guessInfo.length : "X"
-        }/${MAX_TILE_COUNT} ` +
-        `(${(100 * (clientAnswer / actualAnswer)).toFixed(2)}%)\n` +
-        `${guessesOutput}`
-    );
-  };
-
   let roundResults: [UserName, Score, Points, Guess, TileCount][] = (() => {
     let output: [UserName, Score, Points, Guess, TileCount][] = [];
     for (const i of sortedRoundResults) {
@@ -130,7 +96,7 @@ export default function Modal({
                 }
               })}
             </div>
-            <div className="ml-2">{guess.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+            <div className="ml-2">{formatPopulation(guess)}</div>
           </div>
         </td>
         <td className="text-center">
@@ -145,89 +111,6 @@ export default function Modal({
 
   return (
     <>
-      {openModal && (
-        <>
-          <div
-            className="fixed inset-0 bg-gray-700 bg-opacity-50 z-30"
-            onClick={closeModal}
-          ></div>
-
-          <div className="fixed inset-0 flex px-4 z-30 items-center justify-center font-mono text-center">
-            <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
-              <div className="flex p-2 font-mono">
-                <button
-                  onClick={closeModal}
-                  className="bg-night hover:shadow-lg shadow-grey text-white w-8 h-8 ml-1 mr-6 my-1 rounded-md hover:bg-blue-600"
-                >
-                  X
-                </button>
-                <div className="flex flex-col p-4">
-                  <h2 className="text-lg font-semibold">
-                    {answerTileCount === MAX_TILE_COUNT
-                      ? "Winner!"
-                      : "Try Again Tomorrow!"}
-                  </h2>
-                  <p className="mt-2 text-gray-600">
-                    Your Answer:{" "}
-                    {clientAnswer
-                      .toString()
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                    <br />
-                    Actual Answer:{" "}
-                    {actualAnswer
-                      .toString()
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                  </p>
-                  <div className="mt-4 text-blue">
-                    <b> Result</b>
-                    <div className="flex text-sm *:items-center justify-center m-2">
-                      <div className="mr-1">
-                        {`${
-                          answerTileCount === MAX_TILE_COUNT
-                            ? guessInfo.length
-                            : "X"
-                        }/${MAX_TILE_COUNT} (${(
-                          100 *
-                          (clientAnswer / actualAnswer)
-                        ).toFixed(2)}%)`}
-                      </div>
-                      {[...Array(MAX_TILE_COUNT)].map((_, i) => {
-                        if (i < answerTileCount) {
-                          return (
-                            <div
-                              key={i}
-                              className={`bg-grey w-${width} h-${height} mx-2 ${styles.flip}`}
-                              style={{
-                                animationDelay: `${(i + 1) * 100}ms`,
-                                height: height * 4,
-                                width: width * 4,
-                              }}
-                            ></div>
-                          );
-                        } else {
-                          return (
-                            <div
-                              key={i}
-                              className={`bg-grey w-${width} h-${height} mx-2`}
-                              style={{ height: height * 4, width: width * 4 }}
-                            ></div>
-                          );
-                        }
-                      })}
-                    </div>
-                    <button
-                      onClick={copyResults}
-                      className="bg-blue hover:shadow-lg shadow-blue text-white rounded-md w-32 h-8 mt-3 px-2 text-sm"
-                    >
-                      <b>Copy Results</b>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
       {openStartModal && (
         <>
           <div className="fixed inset-0 bg-gray-700 bg-opacity-50 z-30"></div>
@@ -300,9 +183,7 @@ export default function Modal({
                 </table>
                 <div className="mt-4 text-center text-blue">
                   {countryInfo.country}'s population is{" "}
-                  {countryInfo.population
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  {formatPopulation(countryInfo.population)}
                 </div>
                 <div className="mt-2 text-center text-sm text-black">
                   Round {roundNumber + 1} will start soon
