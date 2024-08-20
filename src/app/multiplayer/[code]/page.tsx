@@ -79,8 +79,8 @@ export default function Home({ params }: { params: { code: string } }) {
     setGameEnd(false);
     setRoundStartModal(true);
     setParticipants({}); // Reset game info state.
-    const body: START_REQUEST_BODY = params.code;
-    socket.current.emit(START_REQUEST, body);
+    handleEnterGame(); // Sends request to rejoin game with your current name.
+
   }
 
   useEffect(() => {

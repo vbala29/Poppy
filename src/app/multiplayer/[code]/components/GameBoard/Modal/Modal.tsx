@@ -47,69 +47,72 @@ export default function Modal({
   gameEnd,
   restartGame
 }: Props) {
-  let roundResults: [UserName, Score, Points, Guess, TileCount][] = (() => {
-    let output: [UserName, Score, Points, Guess, TileCount][] = [];
-    for (const i of sortedRoundResults) {
-      const [name, score]: [UserName, Score] = i;
-      const points: Points = participants[name].points;
-      const [guess, tileCount]: [Guess, TileCount] =
-        participants[name].guessInfo !== null ? participants[name].guessInfo : [NO_GUESS, 0];
-      output.push([name, score, points, guess, tileCount]);
-    }
-    return output;
-  })();
 
-  let roundResultsJsx: JSX.Element[] = roundResults.map((res, i) => {
-    let [name, score, points, guess, tileCount]: [
-      UserName,
-      Score,
-      Points,
-      Guess,
-      TileCount
-    ] = res;
-    let width = 2;
-    let height = 2;
-    return (
-      <tr key={i} className="text-sm">
-        <td className="text-center">
-          <b>(+{score})</b> <span className="text-green-500">{name}</span>
-        </td>
-        <td>
-          <div className="flex text-sm *:items-center justify-center">
-            <div className="flex mr-2">
-              {[...Array(MAX_TILE_COUNT)].map((_, i) => {
-                if (i < tileCount) {
-                  return (
-                    <div
-                      key={i}
-                      className={`bg-grey w-${width} h-${height} mx-2 ${styles.flip}`}
-                      style={{
-                        animationDelay: `${(i + 1) * 100}ms`,
-                        height: height * 4,
-                        width: width * 4,
-                      }}
-                    ></div>
-                  );
-                } else {
-                  return (
-                    <div
-                      key={i}
-                      className={`bg-grey w-${width} h-${height} mx-2`}
-                      style={{ height: height * 4, width: width * 4 }}
-                    ></div>
-                  );
-                }
-              })}
+  function roundResultsJsx() {
+    let roundResults: [UserName, Score, Points, Guess, TileCount][] = (() => {
+      let output: [UserName, Score, Points, Guess, TileCount][] = [];
+      for (const i of sortedRoundResults) {
+        const [name, score]: [UserName, Score] = i;
+        const points: Points = participants[name].points;
+        const [guess, tileCount]: [Guess, TileCount] =
+          participants[name].guessInfo !== null ? participants[name].guessInfo : [NO_GUESS, 0];
+        output.push([name, score, points, guess, tileCount]);
+      }
+      return output;
+    })();
+
+    return roundResults.map((res, i) => {
+      let [name, score, points, guess, tileCount]: [
+        UserName,
+        Score,
+        Points,
+        Guess,
+        TileCount
+      ] = res;
+      let width = 2;
+      let height = 2;
+      return (
+        <tr key={i} className="text-sm">
+          <td className="text-center">
+            <b>(+{score})</b> <span className="text-green-500">{name}</span>
+          </td>
+          <td>
+            <div className="flex text-sm *:items-center justify-center">
+              <div className="flex mr-2">
+                {[...Array(MAX_TILE_COUNT)].map((_, i) => {
+                  if (i < tileCount) {
+                    return (
+                      <div
+                        key={i}
+                        className={`bg-grey w-${width} h-${height} mx-2 ${styles.flip}`}
+                        style={{
+                          animationDelay: `${(i + 1) * 100}ms`,
+                          height: height * 4,
+                          width: width * 4,
+                        }}
+                      ></div>
+                    );
+                  } else {
+                    return (
+                      <div
+                        key={i}
+                        className={`bg-grey w-${width} h-${height} mx-2`}
+                        style={{ height: height * 4, width: width * 4 }}
+                      ></div>
+                    );
+                  }
+                })}
+              </div>
+              <div className="ml-2">{guess !== NO_GUESS ? formatPopulation(guess) : "No Guess"}</div>
             </div>
-            <div className="ml-2">{guess !== NO_GUESS ? formatPopulation(guess) : "No Guess"}</div>
-          </div>
-        </td>
-        <td className="text-center">
-          <b>{points}</b>
-        </td>
-      </tr>
-    );
-  });
+          </td>
+          <td className="text-center">
+            <b>{points}</b>
+          </td>
+        </tr>
+      );
+    });
+  }
 
 
   let sortedFinalResults = Object.entries(participants).map((([userName, info]) => (
@@ -221,7 +224,7 @@ export default function Modal({
                       <th>Total</th>
                     </tr>
                   </thead>
-                  <tbody>{roundResultsJsx}</tbody>
+                  <tbody>{roundResultsJsx()}</tbody>
                 </table>
                 <div className="mt-4 text-center text-blue">
                   {countryInfo.country}'s population is{" "}
@@ -254,14 +257,14 @@ export default function Modal({
                   </thead>
                   <tbody>{finalResults}</tbody>
                 </table>
-              <div className="flex items-center justify-center">
-              <button
+                <div className="flex items-center justify-center">
+                  <button
                     className="bg-blue hover:bg-green-500 shadow-blue text-black rounded-md w-45 h-8 mt-3 px-2 text-sm"
                     onClick={() => restartGame()}
                   >
-                    <b>Start a New Game</b>
+                    <b>Play Again!</b>
                   </button>
-              </div>
+                </div>
               </div>
             </div>
           </div>
