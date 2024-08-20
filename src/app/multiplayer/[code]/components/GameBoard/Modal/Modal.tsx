@@ -292,7 +292,7 @@ export default function Modal({
                   <thead>
                     <tr>
                       <th>Name</th>
-                      <th>Guess</th>
+                      <th>Best Guess</th>
                       <th>Total</th>
                     </tr>
                   </thead>

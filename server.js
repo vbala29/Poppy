@@ -92,16 +92,15 @@ app.prepare().then(() => {
     });
 
     socket.on(ROUND_END, () => {
-      multiplayerBookkeeping[code].roundEnded = true;
       const answer = multiplayerBookkeeping[code].population;
       let game = multiplayerData[code];
       let roundResults = [];
       Object.keys(game).forEach((user) => {
         roundResults.push([user, Math.abs(game[user].guessInfo[0] - answer)]);
       });
-      roundResults.sort((a, b) => b[1] - a[1]); // Sort in decreasing order by absolute value distance from answer.
+      roundResults.sort((a, b) => a[1] - b[1]); // Sort in increasing order by absolute value distance from answer.
 
-      let bestDifferential = Number.MAX_VALUE;
+      let bestDifferential = Number.MIN_VALUE;
       let rank = 0;
       let maxPoints = roundResults.length; // Number of users in the game.
       let tieBuildup = 0;
@@ -109,7 +108,7 @@ app.prepare().then(() => {
       for (let index = 0; index < roundResults.length; index++) {
         let i = roundResults[index];
         let differential = i[1];
-        if (differential < bestDifferential) {
+        if (differential > bestDifferential) {
           bestDifferential = differential;
           i.pop();
           i.push(maxPoints - rank);
@@ -129,6 +128,7 @@ app.prepare().then(() => {
 
       // Don't double scores.
       if (!multiplayerBookkeeping[code].roundEnded) {
+        multiplayerBookkeeping[code].roundEnded = true;
         // Calculate information about total points accumulation of each user.
         for (const i of roundResults) {
           let userName = i[0];
