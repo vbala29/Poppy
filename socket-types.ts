@@ -27,6 +27,7 @@ export type MultiplayerBookkeeping = {
         roundNumber: number;
         started: boolean;
         population: number;
+        roundEnded: boolean; // Prevents multiple end of round score calculations happening.
     }
 }
 

@@ -2,7 +2,18 @@ import { createServer } from "http";
 import express from "express";
 import next from "next";
 import { Server } from "socket.io";
-import { START, PLAYERS, START_REQUEST, SCORE_INFO, ROUND_DELAY, ROUND_INFO, ROUND_START, ROUND_END, GUESS, PLAYERS_UPDATE } from "./socket-messages.js"
+import {
+  START,
+  PLAYERS,
+  START_REQUEST,
+  SCORE_INFO,
+  ROUND_DELAY,
+  ROUND_INFO,
+  ROUND_START,
+  ROUND_END,
+  GUESS,
+  PLAYERS_UPDATE,
+} from "./socket-messages.js";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -13,7 +24,7 @@ const handler = app.getRequestHandler();
 
 // See socket-types.ts
 let multiplayerData = {};
-let multiplayerBookkeeping = {}
+let multiplayerBookkeeping = {};
 
 function generateGameCode(length = 8) {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -57,11 +68,14 @@ app.prepare().then(() => {
 
       io.to(code).emit(START, ""); // Tell the other nodes that game has started
 
-      let roundInfoBody = await fetch(`http://${process.env.NEXT_PUBLIC_SITE_URL}/api/data/multiplayer`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(multiplayerBookkeeping[code].previouslySelected),
-      });
+      let roundInfoBody = await fetch(
+        `http://${process.env.NEXT_PUBLIC_SITE_URL}/api/data/multiplayer`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(multiplayerBookkeeping[code].previouslySelected),
+        }
+      );
 
       let roundInfo = await roundInfoBody.json();
       let roundNumber = multiplayerBookkeeping[code].roundNumber;
@@ -69,24 +83,23 @@ app.prepare().then(() => {
       multiplayerBookkeeping[code].previouslySelected.push(roundInfo.country);
       multiplayerBookkeeping[code].population = roundInfo.population;
       console.log("Selected round info for game", roundInfo);
-      io.to(code).emit(ROUND_INFO, { countryInfo : roundInfo, roundNumber });
+      io.to(code).emit(ROUND_INFO, { countryInfo: roundInfo, roundNumber });
 
       setTimeout(() => {
         io.to(code).emit(ROUND_START, "");
         console.log("Sent start round request");
-      }, ROUND_DELAY)
+      }, ROUND_DELAY);
     });
 
     socket.on(ROUND_END, () => {
-      console.log("Round ended");
+      multiplayerBookkeeping[code].roundEnded = true;
       const answer = multiplayerBookkeeping[code].population;
       let game = multiplayerData[code];
-      let roundResults = []
-      Object.keys(game).forEach(user => {
-        roundResults.push([user, Math.abs(game[user].guessInfo[0] - answer)]);       
+      let roundResults = [];
+      Object.keys(game).forEach((user) => {
+        roundResults.push([user, Math.abs(game[user].guessInfo[0] - answer)]);
       });
       roundResults.sort((a, b) => b[1] - a[1]); // Sort in decreasing order by absolute value distance from answer.
-      console.log(roundResults, answer)
 
       let bestDifferential = Number.MAX_VALUE;
       let rank = 0;
@@ -106,29 +119,32 @@ app.prepare().then(() => {
           i.pop();
           i.push(maxPoints - rank + tieBuildup);
         } else {
-          console.error("Algorithm for score calculation found unsorted scores");
+          console.error(
+            "Algorithm for score calculation found unsorted scores"
+          );
         }
 
         rank++;
       }
 
-      // Calculate information about total points accumulation of each user.
-      for (const i of roundResults) {
-        let userName = i[0];
-        let score = i[1];
-        multiplayerData[code][userName].points += score;
+      // Don't double scores.
+      if (!multiplayerBookkeeping[code].roundEnded) {
+        // Calculate information about total points accumulation of each user.
+        for (const i of roundResults) {
+          let userName = i[0];
+          let score = i[1];
+          multiplayerData[code][userName].points += score;
+        }
       }
-      console.log(roundResults);
-      console.log(multiplayerData[code]);
+
       io.to(code).emit(PLAYERS_UPDATE, multiplayerData[code]); // Send updated point tallies and guessInfo.
       io.to(code).emit(SCORE_INFO, roundResults); // Send sorted names/scores.
     });
 
     socket.on(GUESS, ([name, guessInfo]) => {
       multiplayerData[code][name].guessInfo = guessInfo;
-      console.log("recorded best guess for code: " + code + ", name: " + name + ", guess: " + guessInfo)
+      // console.log("recorded best guess for code: " + code + ", name: " + name + ", guess: " + guessInfo)
     });
-
   });
 
   server.post(`/api/multiplayer/create`, (req, res) => {
@@ -138,7 +154,8 @@ app.prepare().then(() => {
       previouslySelected: [],
       roundNumber: 1,
       started: false,
-      population: 0
+      population: 0,
+      roundEnded: false,
     };
     console.log("Created game with code: " + code);
     res.status(201).json({ code }).end();
