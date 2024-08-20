@@ -285,7 +285,7 @@ export default function Modal({
           <div className="z-10 flex px-4 items-center justify-center inset-0 absolute font-mono">
             <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
               <div className="flex flex-col p-2 font-mono">
-                <h2 className="text-lg text-black bg-yellow-500 rounded-md font-semibold text-center mb-1">
+                <h2 className="text-lg text-black bg-yellow-500 rounded-md font-semibold text-center mb-1.5">
                   Round {roundNumber} Results!
                 </h2>
                 <table>
@@ -303,6 +303,9 @@ export default function Modal({
                   {countryInfo.population
                     .toString()
                     .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                </div>
+                <div className="mt-2 text-center text-sm text-black">
+                  Round {roundNumber + 1} will start soon
                 </div>
               </div>
             </div>

@@ -13,6 +13,7 @@ import {
   ROUND_END,
   GUESS,
   PLAYERS_UPDATE,
+  ROUND_INTERLUDE,
 } from "./socket-messages.js";
 
 const dev = process.env.NODE_ENV !== "production";
@@ -50,6 +51,29 @@ app.prepare().then(() => {
     },
   });
 
+  async function roundStartSequence(code) {
+    let roundInfoBody = await fetch(
+      `http://${process.env.NEXT_PUBLIC_SITE_URL}/api/data/multiplayer`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(multiplayerBookkeeping[code].previouslySelected),
+      }
+    );
+
+    let roundInfo = await roundInfoBody.json();
+    // Update list of previously selected countries.
+    multiplayerBookkeeping[code].previouslySelected.push(roundInfo.country);
+    multiplayerBookkeeping[code].population = roundInfo.population;
+    // console.log("Selected round info for game", roundInfo);
+    io.to(code).emit(ROUND_INFO, roundInfo);
+
+    setTimeout(() => {
+      io.to(code).emit(ROUND_START, "");
+      // console.log("Sent start round request");
+    }, ROUND_DELAY);
+  }
+
   const socketServer = io.on("connection", (socket) => {
     const code = socket.handshake.query.code;
 
@@ -68,30 +92,11 @@ app.prepare().then(() => {
 
       io.to(code).emit(START, ""); // Tell the other nodes that game has started
 
-      let roundInfoBody = await fetch(
-        `http://${process.env.NEXT_PUBLIC_SITE_URL}/api/data/multiplayer`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(multiplayerBookkeeping[code].previouslySelected),
-        }
-      );
-
-      let roundInfo = await roundInfoBody.json();
-      let roundNumber = multiplayerBookkeeping[code].roundNumber;
-      // Update list of previously selected countries.
-      multiplayerBookkeeping[code].previouslySelected.push(roundInfo.country);
-      multiplayerBookkeeping[code].population = roundInfo.population;
-      console.log("Selected round info for game", roundInfo);
-      io.to(code).emit(ROUND_INFO, { countryInfo: roundInfo, roundNumber });
-
-      setTimeout(() => {
-        io.to(code).emit(ROUND_START, "");
-        console.log("Sent start round request");
-      }, ROUND_DELAY);
+      roundStartSequence(code); // Fetch ROUND_INFO and call ROUND_START
     });
 
     socket.on(ROUND_END, () => {
+      // Scoring 
       const answer = multiplayerBookkeeping[code].population;
       let game = multiplayerData[code];
       let roundResults = [];
@@ -126,8 +131,10 @@ app.prepare().then(() => {
         rank++;
       }
 
-      // Don't double scores.
+      // Don't double scores/roundNumber or initiation sequence via the roundEnded boolean
       if (!multiplayerBookkeeping[code].roundEnded) {
+        // Round number update to next round.
+        multiplayerBookkeeping[code].roundNumber++;
         multiplayerBookkeeping[code].roundEnded = true;
         // Calculate information about total points accumulation of each user.
         for (const i of roundResults) {
@@ -135,6 +142,14 @@ app.prepare().then(() => {
           let score = i[1];
           multiplayerData[code][userName].points += score;
         }
+
+        // Next round initiation sequence.
+        const SCORE_MODAL_TIME_MS = 5000;
+        setTimeout(() => {
+          multiplayerBookkeeping[code].roundEnded = false;
+          io.to(code).emit(ROUND_INTERLUDE, multiplayerBookkeeping[code].roundNumber);
+          roundStartSequence(code); // Fetch ROUND_INFO and call ROUND_START
+        }, SCORE_MODAL_TIME_MS)
       }
 
       io.to(code).emit(PLAYERS_UPDATE, multiplayerData[code]); // Send updated point tallies and guessInfo.

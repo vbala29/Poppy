@@ -27,24 +27,20 @@ export type MultiplayerBookkeeping = {
         roundNumber: number;
         started: boolean;
         population: number;
-        roundEnded: boolean; // Prevents multiple end of round score calculations happening.
+        roundEnded: boolean;  // Don't double scores/roundNumber or initiation sequence via the roundEnded boolean
     }
 }
 
 type EmptyString = "";
 
-export type RoundInfoData = {
-    countryInfo : DailyInfo,  
-    roundNumber : number
-}
-
 /* Message Body Types (See socket-messages for the message titles) */
 export type PLAYERS_BODY = MultiplayerGame;
 export type START_REQUEST_BODY = Code;
 export type START_BODY = EmptyString;
-export type ROUND_INFO_BODY = RoundInfoData;
+export type ROUND_INFO_BODY = DailyInfo;
 export type ROUND_START_BODY = EmptyString;
 export type ROUND_END_BODY = EmptyString;
 export type GUESS_BODY = [UserName, Guess];
 export type SCORE_INFO_BODY = [UserName, Score][]; // Sorted by Score in decreasing order.
 export type PLAYERS_UPDATE_BODY = MultiplayerGame;
+export type ROUND_INTERLUDE = EmptyString;

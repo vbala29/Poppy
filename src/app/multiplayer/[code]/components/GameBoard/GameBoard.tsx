@@ -57,15 +57,16 @@ export default function GameBoard({
   openScoreModal,
   sortedRoundResults
 }: Props) {
+  const defaultCoordinate = {
+    lat: 0,
+    lon: 0,
+  };
   const [guessInfo, setGuessInfo] = useState<[Guess, TileCount][]>([]);
-  const [country, setCountry] = useState("null");
+  const [country, setCountry] = useState("");
   const [facts, setFacts] = useState<DailyFact | null>(null);
   const [population, setPopulation] = useState(0);
   const [guessedPopulation, setGuessedPopulation] = useState("");
-  const [countryCoordinates, setCountryCoordinates] = useState<Coordinate>({
-    lat: 0,
-    lon: 0,
-  });
+  const [countryCoordinates, setCountryCoordinates] = useState<Coordinate>(defaultCoordinate);
   const [gameOver, setGameOver] = useState(false);
 
   // Route to request today's country
@@ -75,6 +76,18 @@ export default function GameBoard({
     setFacts(countryInfo.facts);
     setCountryCoordinates({ lat: countryInfo.lat, lon: countryInfo.lon });
   }, [countryInfo]);
+
+  useEffect(() => {
+    if (openRoundStartModal) {
+      // Clear game board on new round start.
+      setGuessInfo([]); 
+      setCountry("");
+      setFacts(null);
+      setPopulation(0);
+      setGuessedPopulation("");
+      setCountryCoordinates(defaultCoordinate);
+    }
+  }, [openRoundStartModal])
 
   useEffect(() => {
     if (guessInfo.length >= GUESSES_ALLOWED) {

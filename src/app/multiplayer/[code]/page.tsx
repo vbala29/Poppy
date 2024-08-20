@@ -19,6 +19,7 @@ import {
   PLAYERS_UPDATE,
   ROUND_END,
   ROUND_INFO,
+  ROUND_INTERLUDE,
   ROUND_START,
   SCORE_INFO,
   START,
@@ -87,14 +88,19 @@ export default function Home({ params }: { params: { code: string } }) {
 
       socket.current.on(START, () => {
         setStartModal(false);
-        setRoundNumber(1);
+        setRoundNumber(1); // Round start modal increments by one.
       });
+
+      socket.current.on(ROUND_INTERLUDE, (roundNumber) => {
+        setRoundNumber(roundNumber);
+        setOpenScoreModal(false);
+        setRoundStartModal(true);
+      })
 
       socket.current.on(
         ROUND_INFO,
-        ({ countryInfo, roundNumber }: ROUND_INFO_BODY) => {
+        (countryInfo: ROUND_INFO_BODY) => {
           setCountryInfo(countryInfo);
-          setRoundNumber(roundNumber);
         }
       );
 
