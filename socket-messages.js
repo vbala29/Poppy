@@ -11,6 +11,7 @@ export const PLAYERS_UPDATE = "PLAYERS_UPDATE";
 export const ROUND_INTERLUDE = "ROUND_INTERLUDE"
 export const GUESS_MADE = "GUESS_MADE"; // Is for the pop ups about user made guesses (client -> sever).
 export const GUESS_UPDATE = "GUESS_UPDATE"; // The forwarded GUESS_MADE message to everyone in the game (server -> client).
+export const GAME_END = "GAME_END";
 
 /* MISC */
 export const ROUND_DELAY = 5000; // Wait 5 seconds between round information sent and round start.

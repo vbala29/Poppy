@@ -38,6 +38,8 @@ type Props = {
   sortedRoundResults: SCORE_INFO_BODY;
   setCurrentGuess: (arg0: number) => void;
   guessUpdates: [UserName, Guess][];
+  gameEnd: boolean;
+  restartGame: () => void;
 };
 
 export const MAX_TILE_COUNT = 5;
@@ -63,6 +65,8 @@ export default function GameBoard({
   sortedRoundResults,
   setCurrentGuess,
   guessUpdates,
+  gameEnd,
+  restartGame
 }: Props) {
   const defaultCoordinate = {
     lat: 0,
@@ -97,7 +101,7 @@ export default function GameBoard({
   }, [openRoundStartModal]);
 
   useEffect(() => {
-    if (guessInfo.length > GUESSES_ALLOWED) {
+    if (guessInfo.length > GUESSES_ALLOWED || guessInfo.length === 0) {
       return;
     }
 
@@ -130,7 +134,7 @@ export default function GameBoard({
   }
 
   function submitGuess(e: FormEvent<HTMLFormElement>): void {
-    const MAX_GUESS_VALUE = 1000000000; // 1 billion
+    const MAX_GUESS_VALUE = 10000000000; // 10 billion
     e.preventDefault();
 
     if (guessInfo.length > GUESSES_ALLOWED) {
@@ -206,6 +210,8 @@ export default function GameBoard({
           participants={participants}
           sortedRoundResults={sortedRoundResults}
           countryInfo={countryInfo}
+          gameEnd={gameEnd}
+          restartGame={restartGame}
         />
         <div className="z-0">
           <div className="bg-night flex flex-col items-center justify-center md:justify-normal md:items-start md:flex-row font-mono">

@@ -10,6 +10,7 @@ import {
 } from "../../../../../../../socket-types";
 import { DailyInfo } from "@/lib/redis";
 import formatPopulation from "@/lib/format";
+import { NO_GUESS } from "../../../page";
 
 type Props = {
   actualAnswer: Guess;
@@ -25,6 +26,8 @@ type Props = {
   participants: MultiplayerGame;
   sortedRoundResults: SCORE_INFO_BODY;
   countryInfo: DailyInfo;
+  gameEnd: boolean;
+  restartGame: () => void;
 };
 
 export default function Modal({
@@ -41,6 +44,8 @@ export default function Modal({
   participants,
   sortedRoundResults,
   countryInfo,
+  gameEnd,
+  restartGame
 }: Props) {
   let roundResults: [UserName, Score, Points, Guess, TileCount][] = (() => {
     let output: [UserName, Score, Points, Guess, TileCount][] = [];
@@ -48,7 +53,7 @@ export default function Modal({
       const [name, score]: [UserName, Score] = i;
       const points: Points = participants[name].points;
       const [guess, tileCount]: [Guess, TileCount] =
-        participants[name].guessInfo;
+        participants[name].guessInfo !== null ? participants[name].guessInfo : [NO_GUESS, 0];
       output.push([name, score, points, guess, tileCount]);
     }
     return output;
@@ -96,7 +101,7 @@ export default function Modal({
                 }
               })}
             </div>
-            <div className="ml-2">{formatPopulation(guess)}</div>
+            <div className="ml-2">{guess !== NO_GUESS ? formatPopulation(guess) : "No Guess"}</div>
           </div>
         </td>
         <td className="text-center">
@@ -105,6 +110,43 @@ export default function Modal({
       </tr>
     );
   });
+
+
+  let sortedFinalResults = Object.entries(participants).map((([userName, info]) => (
+    {
+      userName,
+      ...info
+    })
+  )).sort((a, b) => b.points - a.points);
+
+  let finalResults: JSX.Element[] =
+    (() => {
+      let output = [];
+      let prevPoints = -1;
+      let i = 1;
+      let tieBuildup = 0;
+      for (const { userName, guessInfo, points } of sortedFinalResults) {
+        if (points === prevPoints) {
+          tieBuildup++;
+        } else {
+          tieBuildup = 0;
+        }
+
+        output.push((
+          <tr key={i} className="text-sm">
+            <td className="text-center">{i - tieBuildup}.</td>
+            <td className="text-center">
+              <span className="text-green-500">{userName}</span>
+            </td>
+            <td className="text-center">
+              <b>{points}</b>
+            </td>
+          </tr>
+        ));
+        i++;
+      }
+      return output;
+    })();
 
   const width = 5;
   const height = 5;
@@ -188,6 +230,38 @@ export default function Modal({
                 <div className="mt-2 text-center text-sm text-black">
                   Round {roundNumber + 1} will start soon
                 </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+      {gameEnd && (
+        <>
+          <div className="fixed inset-0 bg-gray-700 bg-opacity-50 z-10"></div>
+          <div className="z-10 flex px-4 items-center justify-center inset-0 absolute font-mono">
+            <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
+              <div className="flex flex-col p-2 font-mono">
+                <h2 className="text-lg text-black bg-yellow-500 rounded-md font-semibold text-center mb-1.5">
+                  Game Over!
+                </h2>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Name</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>{finalResults}</tbody>
+                </table>
+              <div className="flex items-center justify-center">
+              <button
+                    className="bg-blue hover:bg-green-500 shadow-blue text-black rounded-md w-45 h-8 mt-3 px-2 text-sm"
+                    onClick={() => restartGame()}
+                  >
+                    <b>Start a New Game</b>
+                  </button>
+              </div>
               </div>
             </div>
           </div>

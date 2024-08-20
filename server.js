@@ -16,6 +16,7 @@ import {
   ROUND_INTERLUDE,
   GUESS_MADE,
   GUESS_UPDATE,
+  GAME_END
 } from "./socket-messages.js";
 
 const dev = process.env.NODE_ENV !== "production";
@@ -52,6 +53,8 @@ app.prepare().then(() => {
       origin: `http://${process.env.NEXT_PUBLIC_SITE_URL}`,
     },
   });
+
+  const MAX_ROUNDS = 6; // Number of rounds in the game.
 
   async function roundStartSequence(code) {
     let roundInfoBody = await fetch(
@@ -97,13 +100,21 @@ app.prepare().then(() => {
       roundStartSequence(code); // Fetch ROUND_INFO and call ROUND_START
     });
 
+    // Notice we don't reply to the whole room in this callback.
+    // This is to let each player actually experience their alloted time, assuming only differences
+    // in synchronization of players on the order of ms. We don't want one player's round ending to cut short
+    // another players round by a couple hundred ms by doing a .to(room).emit().
     socket.on(ROUND_END, () => {
       // Scoring 
       const answer = multiplayerBookkeeping[code].population;
       let game = multiplayerData[code];
       let roundResults = [];
       Object.keys(game).forEach((user) => {
-        roundResults.push([user, Math.abs(game[user].guessInfo[0] - answer)]);
+        if (game[user].guessInfo === null) {
+          roundResults.push([user, Number.MIN_VALUE]);
+        } else {
+          roundResults.push([user, Math.abs(game[user].guessInfo[0] - answer)]);
+        }
       });
       roundResults.sort((a, b) => a[1] - b[1]); // Sort in increasing order by absolute value distance from answer.
 
@@ -149,18 +160,26 @@ app.prepare().then(() => {
         const SCORE_MODAL_TIME_MS = 5000;
         setTimeout(() => {
           multiplayerBookkeeping[code].roundEnded = false;
-          io.to(code).emit(ROUND_INTERLUDE, multiplayerBookkeeping[code].roundNumber);
-          roundStartSequence(code); // Fetch ROUND_INFO and call ROUND_START
+          if (multiplayerBookkeeping[code].roundNumber > MAX_ROUNDS) {
+            // Game over
+            socket.emit(GAME_END, "");
+          } else {
+            Object.keys(game).forEach((user) => {
+              game[user].guessInfo = null;
+            });
+            socket.emit(ROUND_INTERLUDE, multiplayerBookkeeping[code].roundNumber);
+            roundStartSequence(code); // Fetch ROUND_INFO and call ROUND_START
+          }
         }, SCORE_MODAL_TIME_MS)
       }
 
-      io.to(code).emit(PLAYERS_UPDATE, multiplayerData[code]); // Send updated point tallies and guessInfo.
-      io.to(code).emit(SCORE_INFO, roundResults); // Send sorted names/scores.
+      socket.emit(PLAYERS_UPDATE, multiplayerData[code]); // Send updated point tallies and guessInfo.
+      socket.emit(SCORE_INFO, roundResults); // Send sorted names/scores.
     });
 
     socket.on(GUESS, ([name, guessInfo]) => {
       multiplayerData[code][name].guessInfo = guessInfo;
-      // console.log("recorded best guess for code: " + code + ", name: " + name + ", guess: " + guessInfo)
+      console.log("recorded best guess for code: " + code + ", name: " + name + ", guess: " + guessInfo)
     });
 
     socket.on(GUESS_MADE, (guess) => {

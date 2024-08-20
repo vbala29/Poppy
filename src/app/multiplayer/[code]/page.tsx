@@ -16,6 +16,7 @@ import {
   UserName,
 } from "@/../socket-types";
 import {
+  GAME_END,
   GUESS,
   GUESS_MADE,
   GUESS_UPDATE,
@@ -37,6 +38,8 @@ type Params = {
     code: string;
   };
 };
+
+export const NO_GUESS = -1;
 
 export default function Home({ params }: { params: { code: string } }) {
   const [name, setName] = useState("");
@@ -67,11 +70,19 @@ export default function Home({ params }: { params: { code: string } }) {
   const [openScoreModal, setOpenScoreModal] = useState(false);
   const [currentGuess, setCurrentGuess] = useState<null | number>(null);
   const [guessUpdates, setGuessUpdates] = useState<[UserName, Guess][]>([]);
+  const [gameEnd, setGameEnd] = useState(false);
 
   let socket = useRef<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
 
-  // We don't want this useEffect to run on name entrance page because it causes input handler to not run and input
-  // to not be registered. Thus we set enterGame as the dependency
+  function restartGame() {
+    setStartModal(true);
+    setGameEnd(false);
+    setRoundStartModal(true);
+    setParticipants({}); // Reset game info state.
+    const body: START_REQUEST_BODY = params.code;
+    socket.current.emit(START_REQUEST, body);
+  }
+
   useEffect(() => {
     if (socket.current == null) {
       socket.current = io(`http://${process.env.NEXT_PUBLIC_SITE_URL}`, {
@@ -144,6 +155,11 @@ export default function Home({ params }: { params: { code: string } }) {
           setGuessUpdates(newGuessUpdate);
         }, 2000)
       });
+
+      socket.current.on(GAME_END, () => {
+        setOpenScoreModal(false);
+        setGameEnd(true);
+      })
     }
   }, []);
   
@@ -230,6 +246,8 @@ export default function Home({ params }: { params: { code: string } }) {
             openScoreModal={openScoreModal}
             sortedRoundResults={sortedRoundResults}
             guessUpdates={guessUpdates}
+            gameEnd={gameEnd}
+            restartGame={restartGame}
           />
         </main>
       ) : (

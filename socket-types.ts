@@ -14,8 +14,8 @@ export type MultiplayerUser = {
 
 export type MultiplayerGame = {
   [users: UserName]: MultiplayerUser
-
 }
+
 export type MultiplayerData = {
   [games: Code]: MultiplayerGame
 }
@@ -46,3 +46,4 @@ export type PLAYERS_UPDATE_BODY = MultiplayerGame;
 export type ROUND_INTERLUDE_BODY = EmptyString;
 export type GUESS_MADE_BODY = [UserName, Guess];
 export type GUESS_UPDATE_BODY = GUESS_MADE_BODY;
+export type GAME_END_BODY = EmptyString;
