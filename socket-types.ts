@@ -2,12 +2,14 @@ import { Guess, TileCount } from "@/app/components/GameBoard/GameBoard"
 import { DailyInfo } from "@/lib/redis";
 
 /* Generic types used in Message Types below */
-type UserName = string;
-type Code = string;
+export type UserName = string;
+export type Code = string;
+export type Score = number; //  Scored points from a round.
+export type Points = number; // Total points in the game
 
 export type MultiplayerUser = {
   guessInfo: [Guess, TileCount]
-  points: number,
+  points: Points,
 }
 
 export type MultiplayerGame = {
@@ -24,13 +26,14 @@ export type MultiplayerBookkeeping = {
         previouslySelected: string[];
         roundNumber: number;
         started: boolean;
+        population: number;
     }
 }
 
 type EmptyString = "";
 
 export type RoundInfoData = {
-    countryInfo : DailyInfo,
+    countryInfo : DailyInfo,  
     roundNumber : number
 }
 
@@ -42,3 +45,5 @@ export type ROUND_INFO_BODY = RoundInfoData;
 export type ROUND_START_BODY = EmptyString;
 export type ROUND_END_BODY = EmptyString;
 export type GUESS_BODY = [UserName, Guess];
+export type SCORE_INFO_BODY = [UserName, Score][]; // Sorted by Score in decreasing order.
+export type PLAYERS_UPDATE_BODY = MultiplayerGame;

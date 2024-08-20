@@ -8,15 +8,19 @@ import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import {
   PLAYERS_BODY,
+  PLAYERS_UPDATE_BODY,
   ROUND_INFO_BODY,
+  SCORE_INFO_BODY,
   START_REQUEST_BODY,
 } from "@/../socket-types";
 import {
   GUESS,
   PLAYERS,
+  PLAYERS_UPDATE,
   ROUND_END,
   ROUND_INFO,
   ROUND_START,
+  SCORE_INFO,
   START,
   START_REQUEST,
 } from "@/../socket-messages";
@@ -50,9 +54,12 @@ export default function Home({ params }: { params: { code: string } }) {
       lifeExpectancy: 0,
     },
   });
-  const [timeInRound, setTimeInRound] = useState(30);
+  const roundTimeSeconds = 10;
+  const [timeInRound, setTimeInRound] = useState(roundTimeSeconds);
   const [openRoundEndModal, setOpenRoundEndModal] = useState(false);
   const [currentBestGuess, setCurrentBestGuess] = useState<null | [Guess, TileCount]>(null);
+  const [sortedRoundResults, setSortedRoundResults] = useState<SCORE_INFO_BODY>([]);
+  const [openScoreModal, setOpenScoreModal] = useState(false);
 
   let socket = useRef<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
 
@@ -93,7 +100,17 @@ export default function Home({ params }: { params: { code: string } }) {
 
       socket.current.on(ROUND_START, () => {
         setRoundStartModal(false);
-      })
+      });
+
+      socket.current.on(SCORE_INFO, (sortedResults: SCORE_INFO_BODY) => {
+        setSortedRoundResults(sortedResults);
+      });
+
+      socket.current.on(PLAYERS_UPDATE, (msg: PLAYERS_UPDATE_BODY) => {
+        setParticipants(msg);
+        setOpenRoundEndModal(false);
+        setOpenScoreModal(true);
+      });
     }
   }, []);
   
@@ -105,10 +122,9 @@ export default function Home({ params }: { params: { code: string } }) {
     }
   }, [openStartModal]);
 
-  const roundTimeSeconds = 30; // 30 Seconds per round
   useEffect(() => {
     if (!openRoundStartModal) {
-      setTimeInRound(30);
+      setTimeInRound(roundTimeSeconds); // 30 Seconds per round);
       // Round has begun, let's start timer.
       const timerInterval = setInterval(() => {
         setTimeInRound((prev) => {
@@ -171,6 +187,8 @@ export default function Home({ params }: { params: { code: string } }) {
             openRoundEndModal={openRoundEndModal}
             timeInRound={timeInRound}
             setCurrentBestGuess={setCurrentBestGuess}
+            openScoreModal={openScoreModal}
+            sortedRoundResults={sortedRoundResults}
           />
         </main>
       ) : (

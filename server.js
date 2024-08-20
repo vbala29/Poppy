@@ -2,7 +2,7 @@ import { createServer } from "http";
 import express from "express";
 import next from "next";
 import { Server } from "socket.io";
-import { START, PLAYERS, START_REQUEST, ROUND_DELAY, ROUND_INFO, ROUND_START, ROUND_END, GUESS } from "./socket-messages.js"
+import { START, PLAYERS, START_REQUEST, SCORE_INFO, ROUND_DELAY, ROUND_INFO, ROUND_START, ROUND_END, GUESS, PLAYERS_UPDATE } from "./socket-messages.js"
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -66,7 +66,8 @@ app.prepare().then(() => {
       let roundInfo = await roundInfoBody.json();
       let roundNumber = multiplayerBookkeeping[code].roundNumber;
       // Update list of previously selected countries.
-      multiplayerBookkeeping[code].previouslySelected.push(roundInfoBody.country);
+      multiplayerBookkeeping[code].previouslySelected.push(roundInfo.country);
+      multiplayerBookkeeping[code].population = roundInfo.population;
       console.log("Selected round info for game", roundInfo);
       io.to(code).emit(ROUND_INFO, { countryInfo : roundInfo, roundNumber });
 
@@ -78,6 +79,49 @@ app.prepare().then(() => {
 
     socket.on(ROUND_END, () => {
       console.log("Round ended");
+      const answer = multiplayerBookkeeping[code].population;
+      let game = multiplayerData[code];
+      let roundResults = []
+      Object.keys(game).forEach(user => {
+        roundResults.push([user, Math.abs(game[user].guessInfo[0] - answer)]);       
+      });
+      roundResults.sort((a, b) => b[1] - a[1]); // Sort in decreasing order by absolute value distance from answer.
+      console.log(roundResults, answer)
+
+      let bestDifferential = Number.MAX_VALUE;
+      let rank = 0;
+      let maxPoints = roundResults.length; // Number of users in the game.
+      let tieBuildup = 0;
+      // Push scores to the sorted array.
+      for (let index = 0; index < roundResults.length; index++) {
+        let i = roundResults[index];
+        let differential = i[1];
+        if (differential < bestDifferential) {
+          bestDifferential = differential;
+          i.pop();
+          i.push(maxPoints - rank);
+          tieBuildup = 0;
+        } else if (differential == bestDifferential) {
+          tieBuildup++;
+          i.pop();
+          i.push(maxPoints - rank + tieBuildup);
+        } else {
+          console.error("Algorithm for score calculation found unsorted scores");
+        }
+
+        rank++;
+      }
+
+      // Calculate information about total points accumulation of each user.
+      for (const i of roundResults) {
+        let userName = i[0];
+        let score = i[1];
+        multiplayerData[code][userName].points += score;
+      }
+      console.log(roundResults);
+      console.log(multiplayerData[code]);
+      io.to(code).emit(PLAYERS_UPDATE, multiplayerData[code]); // Send updated point tallies and guessInfo.
+      io.to(code).emit(SCORE_INFO, roundResults); // Send sorted names/scores.
     });
 
     socket.on(GUESS, ([name, guessInfo]) => {
@@ -93,7 +137,8 @@ app.prepare().then(() => {
     multiplayerBookkeeping[code] = {
       previouslySelected: [],
       roundNumber: 1,
-      started: false
+      started: false,
+      population: 0
     };
     console.log("Created game with code: " + code);
     res.status(201).json({ code }).end();

@@ -13,6 +13,7 @@ import { GUESSES_ALLOWED } from "@/app/multiplayer/[code]/components/GameBoard/G
 import {
   MultiplayerGame,
   MultiplayerUser,
+  SCORE_INFO_BODY,
 } from "../../../../../../socket-types";
 
 export type TileCount = number;
@@ -30,6 +31,8 @@ type Props = {
   openRoundEndModal: boolean;
   timeInRound: number;
   setCurrentBestGuess: (arg0: [Guess, TileCount]) => void;
+  openScoreModal: boolean;
+  sortedRoundResults: SCORE_INFO_BODY;
 };
 
 export const MAX_TILE_COUNT = 5;
@@ -50,7 +53,9 @@ export default function GameBoard({
   countryInfo,
   openRoundEndModal,
   timeInRound,
-  setCurrentBestGuess
+  setCurrentBestGuess,
+  openScoreModal,
+  sortedRoundResults
 }: Props) {
   const [guessInfo, setGuessInfo] = useState<[Guess, TileCount][]>([]);
   const [country, setCountry] = useState("null");
@@ -183,6 +188,10 @@ export default function GameBoard({
           openRoundStartModal={openRoundStartModal}
           roundNumber={roundNumber}
           openRoundEndModal={openRoundEndModal}
+          openScoreModal={openScoreModal}
+          participants={participants}
+          sortedRoundResults={sortedRoundResults}
+          countryInfo={countryInfo}
         />
         <div className="z-0">
           <div className="bg-night flex flex-col items-center justify-center md:justify-normal md:items-start md:flex-row font-mono">

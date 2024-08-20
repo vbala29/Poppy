@@ -6,7 +6,7 @@ type Props = {
   gameOver: boolean
 };
 
-export const GUESSES_ALLOWED = 6;
+export const GUESSES_ALLOWED = 3;
 
 export default function GuessBoard({ guessInfo, gameOver }: Props) {
   return (
@@ -22,7 +22,7 @@ export default function GuessBoard({ guessInfo, gameOver }: Props) {
                     <>
                     <div className="flex flex-col">
                         <div className="flex bg-black text-white items-center justify-center text-center rounded-md h-fit py-1 mt-1 mb-3 mx-1">
-                        Guess {guessInfo.length + 1} / 6
+                        Guess {guessInfo.length + 1} / {GUESSES_ALLOWED}
                         </div>
                     </div>
                 </>
