@@ -191,14 +191,14 @@ app.prepare().then(() => {
 
     socket.on(GUESS, ([name, guessInfo]) => {
       multiplayerData[code][name].guessInfo = guessInfo;
-      console.log(
-        "recorded best guess for code: " +
-          code +
-          ", name: " +
-          name +
-          ", guess: " +
-          guessInfo
-      );
+      // console.log(
+      //   "recorded best guess for code: " +
+      //     code +
+      //     ", name: " +
+      //     name +
+      //     ", guess: " +
+      //     guessInfo
+      // );
     });
 
     socket.on(GUESS_MADE, (guess) => {

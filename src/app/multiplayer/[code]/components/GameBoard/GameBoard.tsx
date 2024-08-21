@@ -134,10 +134,15 @@ export default function GameBoard({
   }
 
   function submitGuess(e: FormEvent<HTMLFormElement>): void {
-    const MAX_GUESS_VALUE = 10000000000; // 10 billion
     e.preventDefault();
+    // Prevent user being focused on input and despite modal clicking enter key to submit form.
+    if (openScoreModal || openRoundStartModal || openRoundEndModal || openStartModal || gameEnd) {
+      return;
+    }
 
-    if (guessInfo.length > GUESSES_ALLOWED) {
+    const MAX_GUESS_VALUE = 10000000000; // 10 billion
+
+    if (guessInfo.length >= GUESSES_ALLOWED) {
       return;
     }
 

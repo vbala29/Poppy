@@ -212,16 +212,21 @@ export default function Home({ params }: { params: { code: string } }) {
     setName(e.target.value);
   }
 
-  async function handleEnterGame(): Promise<void> {
-    let res = await fetch("/api/multiplayer/join", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: params.code, name }),
-    });
-    if (res.status != 200) {
-      setEnterGameError(await res.text());
+  async function handleEnterGame() {
+    const MAX_NAME_LENGTH = 15;
+    if (name.length > MAX_NAME_LENGTH || name.length <= 0) {
+      setEnterGameError("Name must be between 1 and 15 characters long");
     } else {
-      setEnterGame(true);
+      let res = await fetch("/api/multiplayer/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: params.code, name }),
+      });
+      if (res.status != 200) {
+        setEnterGameError(await res.text());
+      } else {
+        setEnterGame(true);
+      }
     }
   }
 
