@@ -60,12 +60,14 @@ export default function Navbar() {
         <Link
           className="hover:text-blue"
           href="https://github.com/vbala29/PopQuiz"
+          target="_blank"
         >
           <FaGithub size={23} />
         </Link>
         <Link
           className="hover:text-blue"
           href="https://github.com/vbala29/PopQuiz"
+          target="_blank"
         >
           <FaYoutube size={23} />
         </Link>
