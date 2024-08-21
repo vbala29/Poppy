@@ -63,7 +63,7 @@ export default function Modal({
             onClick={closeModal}
           ></div>
 
-          <div className="fixed inset-0 flex px-4 z-50 items-center justify-center font-mono text-center">
+          <div className="fixed inset-0 flex px-4 z-40 items-center justify-center font-mono text-center">
             <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
               <div className="flex p-2 font-mono">
                 <button

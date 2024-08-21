@@ -100,10 +100,6 @@ app.prepare().then(() => {
       roundStartSequence(code); // Fetch ROUND_INFO and call ROUND_START
     });
 
-    // Notice we don't reply to the whole room in this callback.
-    // This is to let each player actually experience their alloted time, assuming only differences
-    // in synchronization of players on the order of ms. We don't want one player's round ending to cut short
-    // another players round by a couple hundred ms by doing a .to(room).emit().
     socket.on(ROUND_END, () => {
       if (multiplayerBookkeeping[code].roundEnded) {
         return;
