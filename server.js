@@ -115,7 +115,7 @@ app.prepare().then(() => {
       let roundResults = [];
       Object.keys(game).forEach((user) => {
         if (game[user].guessInfo === null) {
-          roundResults.push([user, Number.MIN_VALUE]);
+          roundResults.push([user, Number.MAX_VALUE]);
         } else {
           roundResults.push([user, Math.abs(game[user].guessInfo[0] - answer)]);
         }
@@ -237,6 +237,9 @@ app.prepare().then(() => {
         if (!multiplayerData.hasOwnProperty(code)) {
           res.status(401).send(`Invalid game code provided: ${code}`);
           return;
+        } else if (multiplayerBookkeeping[code].started) {
+          res.status(401).send('Game has already started, please wait for it to end and then join.');
+          return;
         }
 
         if (multiplayerData[code].hasOwnProperty(name)) {
@@ -245,6 +248,7 @@ app.prepare().then(() => {
             .send(
               `User with this username (${name}) already exists in game: ${code}`
             );
+            return;
         }
         // Update data store
         multiplayerData[code][name] = { guessInfo: null, points: 0 };

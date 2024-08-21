@@ -71,6 +71,7 @@ export default function Home({ params }: { params: { code: string } }) {
   const [currentGuess, setCurrentGuess] = useState<null | number>(null);
   const [guessUpdates, setGuessUpdates] = useState<[UserName, Guess][]>([]);
   const [gameEnd, setGameEnd] = useState(false);
+  const [enterGameError, setEnterGameError] = useState("");
 
   let socket = useRef<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
 
@@ -110,6 +111,7 @@ export default function Home({ params }: { params: { code: string } }) {
 
       socket.current.on(ROUND_INTERLUDE, (roundNumber) => {
         setRoundNumber(roundNumber);
+        setOpenRoundEndModal(false);
         setOpenScoreModal(false);
         setRoundStartModal(true);
       })
@@ -162,7 +164,7 @@ export default function Home({ params }: { params: { code: string } }) {
       })
     }
   }, []);
-  
+
 
   useEffect(() => {
     if (!openStartModal && socket.current !== null) {
@@ -211,12 +213,16 @@ export default function Home({ params }: { params: { code: string } }) {
   }
 
   async function handleEnterGame(): Promise<void> {
-    await fetch("/api/multiplayer/join", {
+    let res = await fetch("/api/multiplayer/join", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code: params.code, name }),
     });
-    setEnterGame(true);
+    if (res.status != 200) {
+      setEnterGameError(await res.text());
+    } else {
+      setEnterGame(true);
+    }
   }
 
   return (
@@ -278,6 +284,9 @@ export default function Home({ params }: { params: { code: string } }) {
                 >
                   Join Game
                 </button>
+              </div>
+              <div className="flex text-center text-black text-xs items-center justify-center mb-6">
+                {enterGameError}
               </div>
             </div>
 
