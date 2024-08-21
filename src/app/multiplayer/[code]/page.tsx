@@ -271,7 +271,7 @@ export default function Home({ params }: { params: { code: string } }) {
                 <b>Enter </b>
               </h1>
               <div className="flex flex-row text-center items-center justify-center mb-5">
-                <form className="flex">
+                <form className="flex" onSubmit={(e) => { e.preventDefault(); handleEnterGame(); }}>
                   <input
                     type="text"
                     placeholder="Enter Name"
