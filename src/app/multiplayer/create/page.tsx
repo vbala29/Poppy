@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { FaRegCopy } from "react-icons/fa6";
 
 export default function Home() {
-    const [code, setCode] = useState('Loading');
+    const codeDefault = 'Loading';
+    const [code, setCode] = useState(codeDefault);
     const isMounted = useRef(false); // Used for avoiding React Strict mode running useEffect twice, leading to two codes being created
 
     useEffect(() => {
@@ -16,7 +17,11 @@ export default function Home() {
     }, [])
 
     const copyResults = () => {
-        navigator.clipboard.writeText(code)
+        if (code === codeDefault) {
+          return;
+        } else {
+          navigator.clipboard.writeText(code);
+        }
     };
 
   return (
