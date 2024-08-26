@@ -14,32 +14,32 @@ export default function Home() {
         <div className="flex font-mono">
           <div className="w-1/3"></div>
 
-          <div className="w-1/3 flex-col justify-center bg-white mx-3.5 mt-10 rounded-md font-mono">
-            <h1 className="text-black text-xl my-7 text-center">
+          <div className="w-1/3 flex-col justify-center bg-black mx-3.5 mt-10 rounded-md font-mono">
+            <h1 className="text-white text-xl my-7 text-center">
               <b>Welcome to Multiplayer!</b>
             </h1>
 
             <div className="flex text-center">
               <a
                 href="/multiplayer/create"
-                className="bg-blue w-1/2 text-white text-sm rounded-md h-fit py-4 mx-3 my-0.5 hover:bg-black transition-colors duration-200"
+                className="bg-blue w-1/2 text-white text-sm rounded-md h-fit py-4 mx-3 my-0.5 hover:bg-night transition-colors duration-200"
               >
                 <button>Create New Game</button>
               </a>
 
               <a
                 href="/multiplayer/join"
-                className="bg-blue w-1/2 text-white text-sm rounded-md h-fit py-4 mx-3 my-0.5 hover:bg-black transition-colors duration-200"
+                className="bg-blue w-1/2 text-white text-sm rounded-md h-fit py-4 mx-3 my-0.5 hover:bg-night transition-colors duration-200"
               >
                 <button>Join Existing Game</button>
               </a>
             </div>
 
             <div className="text-center mb-8">
-              <h2 className="text-black text-lg mt-5 mb-3">
+              <h2 className="text-white text-lg mt-5 mb-3">
                 <b>How To Play</b>
               </h2>
-              <p className="text-sm">
+              <p className="text-sm text-white">
                 1. Have friends. <br />
                 2. Ask friends to play with you (see step one if FriendNotFound
                 exception thrown). <br />

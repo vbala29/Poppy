@@ -23,8 +23,8 @@ export default function Home() {
         <div className="flex font-mono">
           <div className="w-1/3"></div>
 
-          <div className="w-1/3 flex-col text-center justify-center bg-white mx-3.5 mt-10 rounded-md font-mono">
-            <h1 className="text-black text-xl mt-7 mb-5 text-center">
+          <div className="w-1/3 flex-col text-center justify-center bg-black mx-3.5 mt-10 rounded-md font-mono">
+            <h1 className="text-white text-xl mt-7 mb-5 text-center">
               <b>Join a Multiplayer Game</b>
             </h1>
             <div className="flex flex-row text-center items-center justify-center mb-5">
@@ -42,7 +42,7 @@ export default function Home() {
             <div className="flex text-center items-center justify-center">
               <a
                 href={`/multiplayer/${code}`}
-                className="bg-blue w-1/3 text-white text-sm rounded-md h-fit py-4 mx-3 mb-6 hover:bg-black transition-colors duration-200"
+                className="bg-blue w-1/3 text-white text-sm rounded-md h-fit py-4 mx-3 mb-6 hover:bg-night transition-colors duration-200"
               >
                 <button>Join Game</button>
               </a>

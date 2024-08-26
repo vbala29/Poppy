@@ -266,9 +266,9 @@ export default function Home({ params }: { params: { code: string } }) {
           <div className="flex font-mono">
             <div className="w-1/3"></div>
 
-            <div className="w-1/3 flex-col text-center justify-center bg-white mx-3.5 mt-10 rounded-md font-mono">
-              <h1 className="text-black text-xl mt-7 mb-5 text-center">
-                <b>Enter </b>
+            <div className="w-1/3 flex-col text-center justify-center bg-black mx-3.5 mt-10 rounded-md font-mono">
+              <h1 className="text-white text-xl mt-7 mb-5 text-center">
+                <b>Enter Your Name</b>
               </h1>
               <div className="flex flex-row text-center items-center justify-center mb-5">
                 <form className="flex" onSubmit={(e) => { e.preventDefault(); handleEnterGame(); }}>
@@ -284,7 +284,7 @@ export default function Home({ params }: { params: { code: string } }) {
               </div>
               <div className="flex text-center items-center justify-center">
                 <button
-                  className="bg-blue w-1/3 text-white text-sm rounded-md h-fit py-4 mx-3 mb-6 hover:bg-black"
+                  className="bg-blue w-1/3 text-white text-sm rounded-md h-fit py-4 mx-3 mb-6 hover:bg-night"
                   onClick={handleEnterGame}
                 >
                   Join Game
