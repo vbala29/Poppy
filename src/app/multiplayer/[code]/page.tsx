@@ -62,7 +62,7 @@ export default function Home({ params }: { params: { code: string } }) {
       lifeExpectancy: 0,
     },
   });
-  const roundTimeSeconds = 10;
+  const roundTimeSeconds = 20;
   const [timeInRound, setTimeInRound] = useState(roundTimeSeconds);
   const [openRoundEndModal, setOpenRoundEndModal] = useState(false);
   const [currentBestGuess, setCurrentBestGuess] = useState<null | [Guess, TileCount]>(null);

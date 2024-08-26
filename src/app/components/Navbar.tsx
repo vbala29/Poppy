@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FaGithub, FaYoutube, FaGamepad } from "react-icons/fa";
 import { usePathname } from "next/navigation";
+import { IoIosRose } from "react-icons/io";
 
 function checkActivePath(path: string): boolean {
   const pathname = usePathname();
@@ -41,9 +42,9 @@ export default function Navbar() {
       </div>
 
       <div className="flex flex-grow items-center justify-center space-x-3 p-3 mr-4">
-        <FaGamepad size={30} />
-        <span className="text-3xl font-mono font-bold text-blue-800">
-          PopQuiz
+        <span className="flex justify-center text-3xl font-mono font-bold text-blue-800">
+         <IoIosRose size={30}/>
+          Poppy
         </span>
       </div>
 
