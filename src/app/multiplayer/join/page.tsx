@@ -42,7 +42,7 @@ export default function Home() {
             <div className="flex text-center items-center justify-center">
               <a
                 href={`/multiplayer/${code}`}
-                className="bg-blue w-1/3 text-white text-sm rounded-md h-fit py-4 mx-3 mb-6 hover:bg-black"
+                className="bg-blue w-1/3 text-white text-sm rounded-md h-fit py-4 mx-3 mb-6 hover:bg-black transition-colors duration-200"
               >
                 <button>Join Game</button>
               </a>

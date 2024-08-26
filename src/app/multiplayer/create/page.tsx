@@ -47,7 +47,7 @@ export default function Home() {
                 {code}
               </div>
               <button
-                className="hover:shadow-md hover:shadow-grey/200 hover:rounded-md m-0.5 p-1.5"
+                className="hover:shadow-md hover:shadow-grey/200 hover:rounded-md m-0.5 p-1.5 transition-colors duration-200"
                 onClick={copyResults}
               >
                 <FaRegCopy size={20} />
@@ -56,7 +56,7 @@ export default function Home() {
             <div className="flex text-center items-center justify-center">
               <a
                 href={`/multiplayer/${code}`}
-                className="bg-blue w-1/3 text-white text-sm rounded-md h-fit py-4 mx-3 mb-6 hover:bg-black"
+                className="bg-blue w-1/3 text-white text-sm rounded-md h-fit py-4 mx-3 mb-6 hover:bg-black transition-colors duration-200"
               >
                 <button>Join Game</button>
               </a>

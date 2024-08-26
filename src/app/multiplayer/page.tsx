@@ -22,14 +22,14 @@ export default function Home() {
             <div className="flex text-center">
               <a
                 href="/multiplayer/create"
-                className="bg-blue w-1/2 text-white text-sm rounded-md h-fit py-4 mx-3 my-0.5 hover:bg-black"
+                className="bg-blue w-1/2 text-white text-sm rounded-md h-fit py-4 mx-3 my-0.5 hover:bg-black transition-colors duration-200"
               >
                 <button>Create New Game</button>
               </a>
 
               <a
                 href="/multiplayer/join"
-                className="bg-blue w-1/2 text-white text-sm rounded-md h-fit py-4 mx-3 my-0.5 hover:bg-black"
+                className="bg-blue w-1/2 text-white text-sm rounded-md h-fit py-4 mx-3 my-0.5 hover:bg-black transition-colors duration-200"
               >
                 <button>Join Existing Game</button>
               </a>

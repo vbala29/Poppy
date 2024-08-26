@@ -169,7 +169,7 @@ export default function GameBoard({ rendered, ready }: Props) {
                       />
                       <button
                         type="submit"
-                        className="bg-black text-white rounded-md px-4 h-fit w-1/3 py-3.5 ml-3 my-0.5 hover:bg-blue"
+                        className="bg-black text-white rounded-md px-4 h-fit w-1/3 py-3.5 ml-3 my-0.5 hover:bg-blue transition-colors duration-200"
                       >
                         Guess
                       </button>
