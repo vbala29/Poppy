@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@vercel/speed-insights": "^1.0.12",
     "cheerio": "^1.0.0",
     "cron": "^3.1.7",
     "express": "^4.19.2",
