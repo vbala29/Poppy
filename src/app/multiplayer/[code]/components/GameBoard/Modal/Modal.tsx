@@ -194,9 +194,9 @@ export default function Modal({
           </div>
         </>
       )}
-      {openRoundEndModal && (
+      {openRoundEndModal && (!openScoreModal) && (
         <>
-          <div className="fixed inset-0 bg-gray-700 bg-opacity-50 z-20"></div>
+          <div className="fixed inset-0 bg-gray-700 bg-opacity-50 z-10"></div>
           <div className="z-20 flex px-4 items-center justify-center inset-0 absolute font-mono text-center">
             <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
               <div className="flex flex-col p-2 font-mono">
@@ -210,7 +210,7 @@ export default function Modal({
       )}
       {openScoreModal && (
         <>
-          <div className="fixed inset-0 bg-gray-700 bg-opacity-50 z-10"></div>
+          <div className="fixed inset-0 bg-gray-700 bg-opacity-50 z-20"></div>
           <div className="z-10 flex px-4 items-center justify-center inset-0 absolute font-mono">
             <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
               <div className="flex flex-col p-2 font-mono">
