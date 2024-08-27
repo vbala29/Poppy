@@ -34,7 +34,7 @@ export default function Home() {
                         Thus, Poppy was born (though at the time was a nameless game), and we declared intention for the promulgation of our game, the next
                         of the great mini games (among Wordle, Worldle, the NYT mini, and many more), via a website.
                         <br /><br />
-                        This website is dedicated to Paras, Eleni, and Riku, with whom this game was conceived. While the original game we played is a ancestor of the current multiplayer version,
+                        This website is dedicated to Paras, Eleni, and Riku, with whom this game was conceived. While the original game we played is an ancestor of the current multiplayer version,
                         I have also added a "daily" puzzle version (similar to how Wordle has a daily puzzle), which is what the <Link href="/" className="text-blue hover:font-bold underline">Home</Link> page is.
                     </div>
                     <div className="mt-16 mb-5">
@@ -52,7 +52,7 @@ export default function Home() {
                         </span>
                     </div>
                     <div>
-                        If you more interested in the technical details of this project, please see the <Link href="https://github.com/vbala29/Poppy" className="text-blue hover:font-bold underline">GitHub Repository</Link>
+                        If you more interested in the technical details of this project, please see the <Link href="https://github.com/vbala29/Poppy" target="_blank" className="text-blue hover:font-bold underline">GitHub Repository</Link>
                     </div>
                 </div>
             </main>

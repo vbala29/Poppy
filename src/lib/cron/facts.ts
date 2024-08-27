@@ -40,8 +40,7 @@ export async function getCountryCoordinates(
       lon: res.results[0].geometry.lng,
     };
   } else {
-    console.log(`Unable to retrieve coordinates for ${country}`);
-    return { lat: 0, lon: 0 };
+    return Promise.reject(`Unable to retrieve coordinates for ${country}`)
   }
 }
 
@@ -73,6 +72,10 @@ async function getLifeExpectancies(
     return false;
   });
 
+  if (lifeExpectancyData.lifeExpectancy === 0) {
+    return Promise.reject(`Was unable to find life expectancy data for ${country}`);
+  }
+
   return lifeExpectancyData;
 }
 
@@ -101,6 +104,10 @@ async function getGDP(country: string): Promise<GDPData> {
     return false;
   });
 
+  if (gdpData.gdp === 0) {
+    return Promise.reject(`Was unable to find GDP data for ${country}`);
+  }
+
   return gdpData;
 }
 
@@ -108,13 +115,7 @@ async function restCountries(country: string): Promise<RestCountriesResponse> {
   let restCountriesRes: RestCountriesResponse = await fetch(
     `https://restcountries.com/v3.1/name/${country}`
   )
-    .then((res) => res.json())
-    .catch(() => {
-      {
-        area: 0;
-        population: 0;
-      }
-    });
+    .then((res) => res.json()); //Throws promise rejection propgates if fails.
 
   return {
     area: restCountriesRes[0].area,
