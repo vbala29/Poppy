@@ -1,7 +1,7 @@
 import requests
 
 def update_daily_info():
-    url = 'https://poppy-fawn.vercel.app/api/cron'
+    url = 'http://localhost:3000/api/cron'
     try:
         response = requests.get(url)
         if response.status_code == 200:

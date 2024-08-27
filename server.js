@@ -19,6 +19,7 @@ import {
   GAME_END,
 } from "./socket-messages.js";
 import { CronJob } from "cron";
+import updateDaily from "@/lib/cron/facts"
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -52,10 +53,26 @@ function cleanupGames() {
 }
 
 // Runs every 3 minnutes
-const job = CronJob.from({
+const cleanupJob = CronJob.from({
   cronTime: "*/3 * * * *",
   onTick: () => {
     cleanupGames();
+  },
+  start: true,
+});
+
+// Runs daily
+const dailySelectionJob = CronJob.from({
+  cronTime: "0 0 * * *",
+  onTick: async () => {
+    let retry_count = 10;
+    while(retry_count--) {
+        try {
+            const statusCode = await updateDaily();
+        } catch (error) {
+            console.log("Update daily failed, retrying...", error);
+        }
+    }
   },
   start: true,
 });
