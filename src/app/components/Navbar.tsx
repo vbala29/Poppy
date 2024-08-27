@@ -60,14 +60,14 @@ export default function Navbar() {
         </Link>
         <Link
           className="hover:text-blue transition-color duration-200"
-          href="https://github.com/vbala29/PopQuiz"
+          href="https://github.com/vbala29/Poppy"
           target="_blank"
         >
           <FaGithub size={23} />
         </Link>
         <Link
           className="hover:text-blue transition-color duration-200"
-          href="https://github.com/vbala29/PopQuiz"
+          href="https://github.com/vbala29/Poppy"
           target="_blank"
         >
           <FaYoutube size={23} />

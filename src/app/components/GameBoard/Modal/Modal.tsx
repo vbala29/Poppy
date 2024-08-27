@@ -42,7 +42,7 @@ export default function Modal({
     }
 
     navigator.clipboard.writeText(
-      `PopQuiz™ (${month}/${day}/${year})\n` +
+      `Poppy™ (${month}/${day}/${year})\n` +
         `${
           answerTileCount === MAX_TILE_COUNT ? guessInfo.length : "X"
         }/${MAX_TILE_COUNT} ` +
