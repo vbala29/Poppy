@@ -267,7 +267,6 @@ export default function GameBoard({
 
             <div
               className="flex items-center justify-center md:w-[46%]"
-              style={{ width: "46%" }}
             >
               <QuizGlobe
                 shadedCountry={country}
