@@ -194,7 +194,7 @@ export default function Modal({
           </div>
         </>
       )}
-      {openRoundEndModal && (!openScoreModal) && (
+      {openRoundEndModal && (!openScoreModal) && (!gameEnd) && (
         <>
           <div className="fixed inset-0 bg-gray-700 bg-opacity-50 z-20"></div>
           <div className="z-20 flex px-4 items-center justify-center inset-0 absolute font-mono text-center">
