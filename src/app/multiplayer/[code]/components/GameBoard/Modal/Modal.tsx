@@ -31,6 +31,8 @@ type Props = {
   restartGame: () => void;
 };
 
+const MAX_ROUNDS = 6; // Number of rounds in the game.
+
 export default function Modal({
   actualAnswer,
   clientAnswer,
@@ -218,7 +220,7 @@ export default function Modal({
                   {formatPopulation(countryInfo.population)}
                 </div>
                 <div className="mt-2 text-center text-sm text-black">
-                  Round {roundNumber + 1} will start soon
+                  {roundNumber >= MAX_ROUNDS ? `${roundNumber + 1} will start soon` : `Final scores will be displayed soon`}
                 </div>
               </div>
             </div>

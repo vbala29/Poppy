@@ -84,6 +84,8 @@ function generateGameCode(length = 8) {
   return result;
 }
 
+const MAX_ROUNDS = 6; // Number of rounds in the game.
+
 app.prepare().then(() => {
   const server = express();
   const httpServer = createServer(server);
@@ -92,8 +94,6 @@ app.prepare().then(() => {
       origin: `http://${process.env.NEXT_PUBLIC_SITE_URL}`,
     },
   });
-
-  const MAX_ROUNDS = 6; // Number of rounds in the game.
 
   async function roundStartSequence(code) {
     let roundInfoBody = await fetch(
