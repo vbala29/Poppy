@@ -75,7 +75,7 @@ export default function Modal({
                 <div className="flex flex-col p-4">
                   <h2 className="text-lg font-semibold">{answerTileCount === MAX_TILE_COUNT ? "Winner!" : "Try Again Tomorrow!"}</h2>
                   <p className="mt-2 text-gray-600">
-                    Your Answer:{" "}
+                    Your Best Answer:{" "}
                     {formatNumber(clientAnswer)}
                     <br />
                     Actual Answer:{" "}
