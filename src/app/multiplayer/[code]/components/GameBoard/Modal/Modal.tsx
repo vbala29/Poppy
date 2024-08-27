@@ -10,7 +10,8 @@ import {
 } from "../../../../../../../socket-types";
 import { DailyInfo } from "@/lib/redis";
 import formatPopulation from "@/lib/format";
-import { NO_GUESS } from "../../../page";
+
+export const NO_GUESS = -1;
 
 type Props = {
   actualAnswer: Guess;

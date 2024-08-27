@@ -39,7 +39,6 @@ type Params = {
   };
 };
 
-export const NO_GUESS = -1;
 
 export default function Home({ params }: { params: { code: string } }) {
   const [name, setName] = useState("");

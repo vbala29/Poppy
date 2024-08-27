@@ -41,7 +41,7 @@ export default function QuizGlobe({
   const [globeReady, setGlobeReady] = useState(false);
   const [globeWidth, setGlobeWidth] = useState(0);
   const [globeHeight, setGlobeHeight] = useState(0);
-  const globeEl = useRef();
+  const globeEl = useRef<any>();
 
   function handleResize() {
     if (window.innerWidth < 1200) {
