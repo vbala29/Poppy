@@ -19,7 +19,6 @@ import {
   GAME_END,
 } from "./socket-messages.js";
 import { CronJob } from "cron";
-import updateDaily from "@/lib/cron/facts"
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -65,14 +64,7 @@ const cleanupJob = CronJob.from({
 const dailySelectionJob = CronJob.from({
   cronTime: "0 0 * * *",
   onTick: async () => {
-    let retry_count = 10;
-    while(retry_count--) {
-        try {
-            const statusCode = await updateDaily();
-        } catch (error) {
-            console.log("Update daily failed, retrying...", error);
-        }
-    }
+    fetch(`http://${process.env.NEXT_PUBLIC_SITE_URL}/api/cron`).then(res => console.log("Job selection cron job ran:" + res)).catch(err => console.err("Job selection cron job ran: " + err))
   },
   start: true,
 });

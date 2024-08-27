@@ -289,7 +289,7 @@ export default function Home({ params }: { params: { code: string } }) {
                   Join Game
                 </button>
               </div>
-              <div className="flex text-center text-black text-xs items-center justify-center mb-6">
+              <div className="flex text-center text-white text-xs items-center justify-center mb-6">
                 {enterGameError}
               </div>
             </div>

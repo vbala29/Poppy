@@ -49,7 +49,7 @@ async function getLifeExpectancies(
 ): Promise<LifeExpectancyData> {
   const URL =
     "http://en.wikipedia.org/wiki/List_of_countries_by_life_expectancy";
-  let response = await fetch(URL, { cache: "force-cache" });
+  let response = await fetch(URL, { cache: "no-cache" });
   let text = await response.text();
   let $ = cheerio.load(text);
   let table = $("table.wikitable").first();
