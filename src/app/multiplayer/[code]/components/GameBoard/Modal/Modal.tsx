@@ -194,20 +194,6 @@ export default function Modal({
           </div>
         </>
       )}
-      {openRoundEndModal && (!openScoreModal) && (!gameEnd) && (
-        <>
-          <div className="fixed inset-0 bg-gray-700 bg-opacity-50 z-20"></div>
-          <div className="z-20 flex px-4 items-center justify-center inset-0 absolute font-mono text-center">
-            <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
-              <div className="flex flex-col p-2 font-mono">
-                <h2 className="text-md font-semibold">
-                  Round {roundNumber} has ended! Calculating scores...
-                </h2>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
       {openScoreModal && (
         <>
           <div className="fixed inset-0 bg-gray-700 bg-opacity-50 z-10"></div>
