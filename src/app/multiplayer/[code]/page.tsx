@@ -179,9 +179,14 @@ export default function Home({ params }: { params: { code: string } }) {
       const timerInterval = setInterval(() => {
         setTimeInRound((prev) => {
           if (prev === 0) {
-            clearInterval(timerInterval);
-            setOpenRoundEndModal(true);
-            socket.current.emit(ROUND_END, "");
+            // Used to prevent condition where this client's round ends after other players caused a PLAYER_UPDATE/SCORE_INFO to be sent,
+            // which would mean the end modal remains open over the score modal. 
+            if (!openScoreModal) {
+              clearInterval(timerInterval);
+              setOpenRoundEndModal(true);
+              socket.current.emit(ROUND_END, "");
+            }
+            
             return 0;
           } else {
             return prev - 1;

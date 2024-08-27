@@ -145,6 +145,9 @@ app.prepare().then(() => {
       if (multiplayerBookkeeping[code].roundEnded) {
         return;
       }
+      // Round number update to next round.
+      multiplayerBookkeeping[code].roundNumber++;
+      multiplayerBookkeeping[code].roundEnded = true;
 
       // Scoring
       const answer = multiplayerBookkeeping[code].population;
@@ -185,9 +188,6 @@ app.prepare().then(() => {
         rank++;
       }
 
-      // Round number update to next round.
-      multiplayerBookkeeping[code].roundNumber++;
-      multiplayerBookkeeping[code].roundEnded = true;
       // Calculate information about total points accumulation of each user.
       for (const i of roundResults) {
         let userName = i[0];
