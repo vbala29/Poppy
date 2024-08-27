@@ -17,8 +17,8 @@ function checkActivePath(path: string): boolean {
 
 export default function Navbar() {
   return (
-    <nav className="z-50 flex relative justify-between items-center bg-black text-white p-4 font-mono">
-      <div className="flex-shrink mx-5 flex space-x-10">
+    <nav className="z-50 flex relative justify-between items-center bg-black text-white p-4 font-mono flex-wrap">
+      <div className="flex-shrink mx-5 flex space-x-10 flex-wrap">
         <Link className="hover:text-blue transition-color duration-200" href="/">
           <span
             style={{
@@ -32,8 +32,7 @@ export default function Navbar() {
           <span
             style={{
               textDecoration: checkActivePath("/multiplayer")
-                ? "underline"
-                : "none",
+                ? "underline" : "none",
             }}
           >
             Multiplayer
@@ -41,14 +40,14 @@ export default function Navbar() {
         </Link>
       </div>
 
-      <div className="flex flex-grow items-center justify-center space-x-3 p-3 mr-4">
+      <div className="flex flex-grow items-center justify-center space-x-3 p-3 mr-4 flex-shrink-0">
         <Link href="/" className="hover:text-blue transition-color duration-200 flex justify-center text-3xl font-mono font-bold text-blue-800">
           <IoIosRose size={30} />
           Poppy
         </Link>
       </div>
 
-      <div className="flex flex-shrink mx-5 space-x-10">
+      <div className="flex flex-shrink mx-5 space-x-10 flex-wrap justify-center">
         <Link className="hover:text-blue transition-color duration-200" href="/about">
           <span
             style={{
