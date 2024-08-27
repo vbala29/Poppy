@@ -44,8 +44,13 @@ export default function QuizGlobe({
   const globeEl = useRef();
 
   function handleResize() {
-    setGlobeWidth(window.innerWidth / globeWidthRatio);
-    setGlobeHeight(window.innerHeight / globeHeightRatio);
+    if (window.innerWidth < 1200) {
+      setGlobeWidth(window.innerWidth);
+      setGlobeHeight(window.innerHeight);
+    } else {
+      setGlobeWidth(window.innerWidth / globeWidthRatio);
+      setGlobeHeight(window.innerHeight / globeHeightRatio);
+    }
   }
 
   useEffect(() => {

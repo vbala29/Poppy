@@ -18,6 +18,7 @@ import {
   GUESS_UPDATE,
   GAME_END,
 } from "./socket-messages.js";
+import { CronJob } from "cron";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -29,6 +30,35 @@ const handler = app.getRequestHandler();
 // See socket-types.ts
 let multiplayerData = {};
 let multiplayerBookkeeping = {};
+let timeoutBookkeeping = {};
+
+function utcSecondsSinceEpoch() {
+  const now = new Date();
+  const utcMilllisecondsSinceEpoch =
+    now.getTime() + now.getTimezoneOffset() * 60 * 1000;
+  const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
+  return utcSecondsSinceEpoch;
+}
+
+function cleanupGames() {
+  for (var k of Object.keys(timeoutBookkeeping)) {
+    // If it has been more than 5 minutes since the game was last restarted clear its data.
+    if (timeoutBookkeeping[k] + 60 * 5 < utcSecondsSinceEpoch()) {
+      delete timeoutBookkeeping[k];
+      delete multiplayerBookkeeping[k];
+      delete multiplayerData[k];
+    }
+  }
+}
+
+// Runs every 3 minnutes
+const job = CronJob.from({
+  cronTime: "*/3 * * * *",
+  onTick: () => {
+    cleanupGames();
+  },
+  start: true,
+});
 
 function generateGameCode(length = 8) {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -86,7 +116,7 @@ app.prepare().then(() => {
     socket.join(code);
 
     socket.on("disconnect", () => {
-      console.log("Client disconnected");
+      // console.log("Client disconnected");
     });
 
     socket.on(START_REQUEST, async (code) => {
@@ -94,6 +124,8 @@ app.prepare().then(() => {
         return;
       }
       multiplayerBookkeeping[code].started = true;
+
+      timeoutBookkeeping[code] = utcSecondsSinceEpoch();
 
       io.to(code).emit(START, ""); // Tell the other nodes that game has started
 
@@ -212,7 +244,8 @@ app.prepare().then(() => {
       population: 0,
       roundEnded: false,
     };
-    console.log("Created game with code: " + code);
+
+    timeoutBookkeeping[code] = utcSecondsSinceEpoch();
     res.status(201).json({ code }).end();
   });
 
@@ -234,7 +267,11 @@ app.prepare().then(() => {
           res.status(401).send(`Invalid game code provided: ${code}`);
           return;
         } else if (multiplayerBookkeeping[code].started) {
-          res.status(401).send('Game has already started, please wait for it to end and then join.');
+          res
+            .status(401)
+            .send(
+              "Game has already started, please wait for it to end and then join."
+            );
           return;
         }
 
@@ -244,7 +281,7 @@ app.prepare().then(() => {
             .send(
               `User with this username (${name}) already exists in game: ${code}`
             );
-            return;
+          return;
         }
         // Update data store
         multiplayerData[code][name] = { guessInfo: null, points: 0 };

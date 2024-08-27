@@ -7,6 +7,10 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    screens: {
+      'md': '1200px',
+      // => @media (min-width: 576px) { ... }
+    },
     extend: {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -19,7 +23,7 @@ const config: Config = {
         'white': '#fefefe',
         'night': '#000011',
         'grey': "#808080"
-      }
+      },
     },
   },
 };

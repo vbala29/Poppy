@@ -221,7 +221,7 @@ export default function GameBoard({
         <div className="z-0">
           <div className="bg-night flex flex-col items-center justify-center md:justify-normal md:items-start md:flex-row font-mono">
             {ready && (
-              <div className="" style={{ width: "27%" }}>
+              <div className="md:w-[27%]">
                 <div className="bg-night mx-5 my-10 h-fit rounded-lg">
                   <div className="flex flex-col mx-3 my-1">
                     <h2 className="flex text-center mx-3.5 my-5 items-center justify-center bg-white rounded-md text-black h-fit py-3.5">
@@ -266,7 +266,7 @@ export default function GameBoard({
             )}
 
             <div
-              className="flex items-center justify-center"
+              className="flex items-center justify-center md:w-[46%]"
               style={{ width: "46%" }}
             >
               <QuizGlobe
@@ -277,7 +277,7 @@ export default function GameBoard({
             </div>
 
             {ready && (
-              <div className="" style={{ width: "27%" }}>
+              <div className="md:w-[27%]">
                 <div className="bg-night mx-5 my-10 h-fit rounded-lg">
                   <div className="flex flex-col mx-3 my-1">
                     <h2 className=" text-center mx-3.5 mt-5 mb-2 items-center justify-center bg-white rounded-md text-black h-fit py-3.5">

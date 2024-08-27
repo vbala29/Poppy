@@ -148,7 +148,7 @@ export default function GameBoard({ rendered, ready }: Props) {
 
 
             {ready && (
-              <div className="" style={{ width: "27%" }}>
+              <div className="md:w-[27%]">
                 <div className="bg-night mx-5 my-10 h-fit rounded-lg">
                   <div className="flex flex-col mx-3 my-1">
                     <h2 className="flex text-center mx-3.5 my-5 items-center justify-center bg-white rounded-md text-black h-fit py-3.5">
@@ -182,7 +182,7 @@ export default function GameBoard({ rendered, ready }: Props) {
               </div>
             )}
 
-            <div className="flex items-center justify-center" style={{ width: "46%" }}>
+            <div className="flex items-center justify-center md:w-[46%]">
               <QuizGlobe
                 shadedCountry={country}
                 endCoordinates={countryCoordinates}
@@ -191,7 +191,7 @@ export default function GameBoard({ rendered, ready }: Props) {
             </div>
 
             {ready && (
-              <div className="" style={{ width: "27%" }}>
+              <div className="md:w-[27%]">
                 <div className="bg-night mx-5 my-10 h-fit rounded-lg">
                   <div className="flex flex-col mx-3 my-1">
                     <h2 className="flex text-center mx-3.5 mt-5 mb-2 items-center justify-center bg-white rounded-md text-black h-fit py-3.5">
