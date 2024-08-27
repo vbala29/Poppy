@@ -85,7 +85,7 @@ export default function Home({ params }: { params: { code: string } }) {
 
   useEffect(() => {
     if (socket.current == null) {
-      socket.current = io(`http://${process.env.NEXT_PUBLIC_SITE_URL}`, {
+      socket.current = io(`https://${process.env.NEXT_PUBLIC_SITE_URL}`, {
         query: {
           code: params.code, // Used for socket.io rooms
         },
