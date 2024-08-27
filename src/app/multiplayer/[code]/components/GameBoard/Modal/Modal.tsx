@@ -220,7 +220,7 @@ export default function Modal({
                   {formatPopulation(countryInfo.population)}
                 </div>
                 <div className="mt-2 text-center text-sm text-black">
-                  {roundNumber >= MAX_ROUNDS ? `${roundNumber + 1} will start soon` : `Final scores will be displayed soon`}
+                  {roundNumber < MAX_ROUNDS ? `${roundNumber + 1} will start soon` : `Final scores will be displayed soon`}
                 </div>
               </div>
             </div>
