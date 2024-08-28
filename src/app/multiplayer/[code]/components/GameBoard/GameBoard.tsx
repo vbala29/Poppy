@@ -123,12 +123,31 @@ export default function GameBoard({
     }
   }
 
+  function dynamicScaleFactor(population: number) {
+    const ONE_MILLION = 1000000;
+    const TEN_MILLION = 10000000;
+    const FIFTY_MILLION = 50000000;
+    const ONE_HUNDRED_MILLION = 100000000;
+    if (population < ONE_MILLION) {
+      return 5;
+    } else if (population < TEN_MILLION) {
+      return 2;
+    } else if (population < FIFTY_MILLION) {
+        return 1.5;
+    } else if (population < ONE_HUNDRED_MILLION) {
+      return 1.3;
+    } else {
+      return 1;
+    }
+  }
+
   function calculateTileCount(guess: Guess): TileCount {
     let scaledPop = Math.log(population) / Math.log(TILE_COUNT_SCALER);
 
     let intervals: number[] = [];
+    let DYNAMIC_SCALE = dynamicScaleFactor(population);
     for (let i = 0; i < MAX_TILE_COUNT; i++) {
-      intervals.push(Math.pow(TILE_COUNT_SCALER, scaledPop - i));
+      intervals.push(DYNAMIC_SCALE * Math.pow(TILE_COUNT_SCALER, scaledPop - (i/2)));
     }
 
     let tileCount = 0;

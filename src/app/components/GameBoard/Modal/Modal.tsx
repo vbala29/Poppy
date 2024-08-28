@@ -89,7 +89,7 @@ export default function Modal({
                           answerTileCount === MAX_TILE_COUNT
                             ? guessInfo.length
                             : "X"
-                        }/${MAX_TILE_COUNT} (${(
+                        }/${'6'} (${(
                           100 *
                           (clientAnswer / actualAnswer)
                         ).toFixed(2)}%)`}
