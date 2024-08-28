@@ -59,7 +59,15 @@ export default function GameBoard({ rendered, ready }: Props) {
   }, [guessInfo]);
 
   function handlePopulationInput(e: ChangeEvent<HTMLInputElement>): void {
-    setGuessedPopulation(e.target.value);
+    const value = e.target.value;
+    const sanitizedValue = value.replace(/,/g, '');
+    if (!isNaN(Number(sanitizedValue)) && sanitizedValue.trim() !== '') {
+      // Format the number with commas
+      const formattedValue = Number(sanitizedValue).toLocaleString();
+      setGuessedPopulation(formattedValue);
+    } else {
+      setGuessedPopulation(value);
+    }
   }
 
   function calculateTileCount(guess: Guess): TileCount {

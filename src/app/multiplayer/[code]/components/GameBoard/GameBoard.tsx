@@ -111,7 +111,16 @@ export default function GameBoard({
   }, [guessInfo]);
 
   function handlePopulationInput(e: ChangeEvent<HTMLInputElement>): void {
-    setGuessedPopulation(e.target.value);
+    const value = e.target.value;
+    const sanitizedValue = value.replace(/,/g, '');
+    if (!isNaN(Number(sanitizedValue)) && sanitizedValue.trim() !== '') {
+      // Format the number with commas
+      const formattedValue = Number(sanitizedValue).toLocaleString();
+      setGuessedPopulation(formattedValue);
+    } else {
+      // If not a number, just set the original value
+      setGuessedPopulation(value);
+    }
   }
 
   function calculateTileCount(guess: Guess): TileCount {
